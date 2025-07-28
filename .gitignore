@@ -1,3 +1,5 @@
+# 환경변수 보안 파일
+.env
 # Miscellaneous
 *.class
 *.log

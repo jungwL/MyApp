@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 import 'login.dart';
 import 'mypage.dart';
@@ -73,7 +74,7 @@ class _HomePageState extends State<HomePage> {
   // openweather에서 제공하는 API로 날씨 정보 가져오는 메서드
   Future<void> _fetchWeather() async {
     // 비동기 작업을 수행하고 아무 값도 반환하지 않는다. async키워드 ==> await 사용가능하게
-    const apiKey = '045a61fabebac776f69313ef43cda80a'; //발급받은 API키를 지정 (암호화 필수)
+    var apiKey = dotenv.env['OPENWEATHERMAP_KEY']; //발급받은 API키를 지정 (암호화 필수)
     final url =
         'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey&units=metric&lang=kr'; //날씨 api요청 URL
 
