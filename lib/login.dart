@@ -62,13 +62,14 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
           'password': _passwordController.text,
         }),
       );
+      print('http 응답코드 : ${response.statusCode}');
       //응답코드가 200일경우
       if (response.statusCode == 200) {
         final user = User.fromJson(json.decode(response.body)); //회원DB를 통해 받은 데이터 값 저장
         UserSession.login(user); // 로그인 상태 유지 처리
         print(user.userName);
         final targetPage = widget.redirectTo == 'mypage'
-            ? const MyPage() //로그인 성공했을경우 마이페이지
+            ? const MyPage() //마이페이지 선택 후 로그인했을 경우 마이페이지로 이동
             : const HomePage(); //아닐경우 홈페이지로 이동
 
         Navigator.pushReplacement(
