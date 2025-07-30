@@ -143,10 +143,13 @@ class _AddressChangePageState extends State<AddressChangePage> {
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : ElevatedButton.icon(
-                icon: const Icon(Icons.check_circle_outline),
-                label: const Text('변경 완료'),
+                icon: const Icon(Icons.check_circle_outline,color: Colors.white,),
+                label: const Text('변경 완료',
+                  style: TextStyle(
+                    color: Colors.white
+                  ),),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
+                  backgroundColor: Colors.brown,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
