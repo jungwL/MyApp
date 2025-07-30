@@ -67,17 +67,27 @@ class PasswordChangePage extends StatelessWidget {
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 30),
-            TextField(
+            TextFormField(
               controller: _passwordController,
               obscureText: true,
               decoration: InputDecoration(
                 labelText: '새 비밀번호',
+                labelStyle: TextStyle(
+                  color: Colors.brown
+                ),
                 prefixIcon: const Icon(Icons.lock_outline),
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: Colors.brown,
+                    width: 2.0
+                  )
+                )
               ),
             ),
             const SizedBox(height: 30),
@@ -86,7 +96,7 @@ class PasswordChangePage extends StatelessWidget {
               height: 50,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
+                  backgroundColor: Colors.brown,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -110,7 +120,7 @@ class PasswordChangePage extends StatelessWidget {
 
                   _showSnackBar(context, '비밀번호가 변경되었습니다', Colors.green);
                 },
-                child: const Text('변경 완료', style: TextStyle(fontSize: 16)),
+                child: const Text('변경 완료', style: TextStyle(fontSize: 16,color: Colors.white)),
               ),
             ),
           ],

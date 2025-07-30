@@ -15,7 +15,7 @@ class _SettingState extends State<Setting> {
   bool notificationsEnabled = true;
   String language = '한국어';
 
-  final List<String> languages = ['한국어', 'English', '日本語', '中文'];
+  final List<String> languagesList = ['한국어', 'English', '日本語', '中文'];
 
   @override
   void didChangeDependencies() {
@@ -28,7 +28,8 @@ class _SettingState extends State<Setting> {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('설정'),
+        title: const Text('설정',style: TextStyle(fontWeight: FontWeight.bold),),
+        centerTitle: true,
         elevation: 0,
         backgroundColor: theme.scaffoldBackgroundColor,
         foregroundColor: theme.textTheme.bodyLarge?.color,
@@ -62,7 +63,7 @@ class _SettingState extends State<Setting> {
               ),
               subtitle: const Text('화면을 어둡게 하여 눈의 피로를 줄입니다'), //타일의 부제목 텍스트
               value: isDark, //스위치 상태를 isDartk 변구 값에 따라 결정(on/off)
-              activeColor: Colors.deepPurpleAccent, //스위치가 on일 때 표시할 색상 지정
+              activeColor: Colors.brown, //스위치가 on일 때 표시할 색상 지정
               onChanged: (value) {
                 //스위치가 변경되면 isDark 상태를 업데이트 하고 앱테마를 변경하는 메서드 호출
                 setState(() {
@@ -97,7 +98,7 @@ class _SettingState extends State<Setting> {
               ),
               subtitle: const Text('새 소식과 업데이트를 받습니다'),
               value: notificationsEnabled,
-              activeColor: const Color.fromARGB(255, 122, 75, 250),
+              activeColor: Colors.brown,
               onChanged: (value) {
                 setState(() {
                   notificationsEnabled = value;
@@ -131,12 +132,12 @@ class _SettingState extends State<Setting> {
               subtitle: Text(
                 language,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.primary,
+                  color: Colors.brown,
                 ),
               ),
               trailing: Icon(
                 Icons.keyboard_arrow_right,
-                color: theme.colorScheme.primary,
+                color: Colors.brown,
               ),
               onTap: _showLanguageDialog,
               shape: RoundedRectangleBorder(
@@ -192,7 +193,7 @@ class _SettingState extends State<Setting> {
               trailing: Icon(
                 // 오른쪽 끝에 아이콘 추가
                 Icons.phone_forwarded, // 전화 아이콘
-                color: theme.colorScheme.primary, // 테마의 주 색상 적용
+                color: Colors.brown, // 테마의 주 색상 적용
               ),
               onTap: () {
                 // 카드 눌렀을 때 실행되는 함수
@@ -238,7 +239,7 @@ class _SettingState extends State<Setting> {
               ),
               trailing: Icon(
                 Icons.open_in_new,
-                color: theme.colorScheme.primary,
+                color: Colors.brown,
               ),
               onTap: () {
                 showDialog(
@@ -277,13 +278,16 @@ class _SettingState extends State<Setting> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              icon: const Icon(Icons.logout_rounded),
+              icon: const Icon(Icons.logout_rounded,color: Colors.white,),
               label: const Text(
                 '로그아웃',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white
+                ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 77, 160, 255),
+                backgroundColor: Colors.brown,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -310,7 +314,7 @@ class _SettingState extends State<Setting> {
         style: const TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
-          color: Colors.deepPurpleAccent,
+          color: Colors.brown,
         ),
       ),
     );
@@ -325,12 +329,12 @@ class _SettingState extends State<Setting> {
             borderRadius: BorderRadius.circular(16),
           ),
           title: const Text('언어 선택'),
-          children: languages.map((lang) {
+          children: languagesList.map((lang) {
             return RadioListTile<String>(
               title: Text(lang),
               value: lang,
               groupValue: language,
-              activeColor: Colors.deepPurpleAccent,
+              activeColor: Colors.brown,
               onChanged: (value) {
                 setState(() {
                   language = value!;

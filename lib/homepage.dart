@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'login.dart';
 import 'mypage.dart';
 import 'setting.dart';
@@ -31,18 +32,32 @@ class _HomePageState extends State<HomePage> {
   String today = DateFormat('yyyy년 MM월 dd일').format(DateTime.now());
 
   final PageController _pageController = PageController(viewportFraction: 0.9);
+  final PageController _slideController = PageController();
   int _currentBannerIndex = 0;
   late Timer _bannerTimer;
 
+// 1. 변수 추가: 현재 슬라이드 인덱스와 타이머
+  int _currentSlideIndex = 0;
+  late Timer _slideTimer;
+
+  //배너 이미지
   final List<String> _bannerImages = [
-  /*  'assets/image/banner1.jpg',
-    'assets/image/banner2.jpg',
-    'assets/image/banner3.jpg',
-  */];
+    'assets/images/banner1.png',
+    'assets/images/banner2.png',
+    'assets/images/banner3.png',
+  ];
+
+  // 슬라이드 이미지
+  final List<String> imagePaths = [
+    'assets/images/slide1.png',
+    'assets/images/slide2.png',
+    'assets/images/slide3.png',
+  ];
 
   @override
   void initState() {
     super.initState();
+    _startSlideAutoPlay();
     _startAutoSlide();
     _fetchWeather();
 
@@ -50,16 +65,32 @@ class _HomePageState extends State<HomePage> {
       _showCookieConsentBottomSheet();
     });
   }
-
+// 3. dispose에서 타이머 정리
   @override
   void dispose() {
     _pageController.dispose();
-    _bannerTimer.cancel();
+    _slideTimer?.cancel();
+    _slideController.dispose();
+    _bannerTimer?.cancel();
     super.dispose();
   }
 
+  //최상단 이미지 영역 자동 슬라이드 함수
+  void _startSlideAutoPlay() {
+    _slideTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
+      if (_slideController.hasClients) {
+        _currentSlideIndex = (_currentSlideIndex + 1) % imagePaths.length;
+        _slideController.animateToPage(
+          _currentSlideIndex,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+  //배너 영역 자동 슬라이드
   void _startAutoSlide() {
-    _bannerTimer = Timer.periodic(const Duration(seconds: 4), (_) {
+    _bannerTimer = Timer.periodic(const Duration(seconds: 3), (_) {
       if (_pageController.hasClients) {
         int nextPage = (_currentBannerIndex + 1) % _bannerImages.length;
         _pageController.animateToPage(
@@ -196,29 +227,17 @@ class _HomePageState extends State<HomePage> {
   Widget _buildHomePage() {
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.only(top: 0, left: 24, right: 24, bottom: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Column(
-                children: [
-                  Image.asset(
-                    '/images/Logo1.png',
-                    width: 150,
-                    height: 150,
-                    fit: BoxFit.contain,
-                  ),
-                ],
-              ),
-            ),
+            _mainSlide(),
             const SizedBox(height: 24),
+            _pageViewBanner(),
             _todayScheduleCard(),
             _notificationCard(),
             _statsCard(),
             _weatherCard(),
-            _pageViewBanner(),
-
             //footer추가
             const SizedBox(height: 24),
             const AppFooter(), // footer.dart에 정의된 위젯
@@ -306,22 +325,54 @@ class _HomePageState extends State<HomePage> {
     ),
   );
 
-  Widget _actionButton(IconData icon, String label, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
+  //상단 슬라이드위젯
+  Widget _mainSlide() {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.9,
+      width: double.infinity,
+      child: Stack(
         children: [
-          CircleAvatar(
-            radius: 24,
-            backgroundColor: Colors.blueAccent,
-            child: Icon(icon, size: 28, color: Colors.blueAccent),
+          PageView.builder(
+            controller: _slideController,
+            physics: const PageScrollPhysics(),
+            itemCount: imagePaths.length,
+            onPageChanged: (index) {
+              setState(() {
+                _currentSlideIndex = index;
+              });
+            },
+            itemBuilder: (context, index) {
+              return Image.asset(
+                imagePaths[index],
+                fit: BoxFit.cover,
+                width: double.infinity,
+              );
+            },
           ),
-          const SizedBox(height: 6),
-          Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+          // 인디케이터 위치 조절 (하단 중앙)
+          Positioned(
+            bottom: 16,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: SmoothPageIndicator(
+                controller: _slideController,
+                count: imagePaths.length,
+                effect: WormEffect(
+                  dotHeight: 8,
+                  dotWidth: 8,
+                  type: WormType.thin,
+                  activeDotColor: Colors.white,
+                  dotColor: Colors.white54,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
+
 
   Widget _pageViewBanner() => Column(
     children: [
@@ -329,6 +380,7 @@ class _HomePageState extends State<HomePage> {
         height: 160,
         child: PageView.builder(
           controller: _pageController,
+          physics: const PageScrollPhysics(),
           itemCount: _bannerImages.length,
           onPageChanged: (index) {
             setState(() {
@@ -356,21 +408,16 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       const SizedBox(height: 8),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(_bannerImages.length, (index) {
-          return Container(
-            width: 8,
-            height: 8,
-            margin: const EdgeInsets.symmetric(horizontal: 4),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: _currentBannerIndex == index
-                  ? Colors.blueAccent
-                  : Colors.grey[400],
-            ),
-          );
-        }),
+      SmoothPageIndicator(
+        controller: _pageController,
+        count: _bannerImages.length,
+        effect: WormEffect(
+          dotHeight: 8,
+          dotWidth: 8,
+          type: WormType.thin,  // WormStyle.thin 스타일 적용
+          activeDotColor: Colors.brown,
+          dotColor: Colors.grey.shade400,
+        ),
       ),
     ],
   );
@@ -450,7 +497,7 @@ class _HomePageState extends State<HomePage> {
                           context , '/login'
                       ); // 로그인 화면으로 이동
                     },
-                    child: const Text('로그인하러 가기'),
+                    child: const Text('로그인하러 가기',)
                   ),
                 ],
               ),
@@ -503,13 +550,16 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.orange.shade200,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Colors.blueAccent,
+        selectedItemColor: Colors.brown,
         unselectedItemColor: Colors.grey,
         selectedFontSize: 14,
         unselectedFontSize: 13,
         type: BottomNavigationBarType.fixed,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: '홈'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: '홈'
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings_outlined),
             label: '설정',

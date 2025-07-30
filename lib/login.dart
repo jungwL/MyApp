@@ -123,16 +123,32 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                   ),
                   const SizedBox(height: 32),
                   TextFormField(
+                    cursorColor: Colors.brown,
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
+                      hintText: 'example@example.com',
+                      hintStyle: TextStyle(
+                        color: Colors.brown.withOpacity(0.4),
+                        fontStyle: FontStyle.italic
+                      ),
                       labelText: '이메일',
+                      labelStyle: TextStyle(
+                        color: Colors.brown
+                      ),
                       prefixIcon: const Icon(Icons.email_outlined),
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Colors.brown,
+                          width: 2.0,
+                        )
+                      )
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -149,12 +165,22 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                     obscureText: true,
                     decoration: InputDecoration(
                       labelText: '비밀번호',
+                      labelStyle: TextStyle(
+                        color: Colors.brown,
+                      ),
                       prefixIcon: const Icon(Icons.lock_outline),
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Colors.brown,
+                          width: 2.0
+                        )
+                      )
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
