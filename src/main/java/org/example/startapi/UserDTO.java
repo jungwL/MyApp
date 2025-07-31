@@ -3,7 +3,6 @@ package org.example.startapi;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UserDTO {
-    //변수
     @JsonProperty("userId")
     private String userId;
 
@@ -14,18 +13,18 @@ public class UserDTO {
 
     private int userPoint;
 
- ;   public UserDTO() {}
+    private String phoneNumber;
 
-    // 생성자
-    public UserDTO(String userId, String password, String userName, int userPoint) {
+    public UserDTO() {}
+
+    public UserDTO(String userId, String password, String userName, int userPoint, String phoneNumber) {
         this.userId = userId;
         this.password = password;
         this.userName = userName;
         this.userPoint = userPoint;
+        this.phoneNumber = phoneNumber;
     }
 
-
-    //Getter Setter
     public String getUserId() {
         return userId;
     }
@@ -58,13 +57,11 @@ public class UserDTO {
         this.userPoint = userPoint;
     }
 
-    @Override
-    public String toString() {
-        return "UserDTO{" +
-                "userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", userName='" + userName + '\'' +
-                ", userPoint=" + userPoint +
-                '}';
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }
