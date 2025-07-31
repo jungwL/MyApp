@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:studyex04/login.dart';
 import 'homepage.dart'; // 메인 홈 화면
+import 'joinUser.dart';
 
 void main() {
   runApp(const MyApp());
@@ -52,7 +53,8 @@ class _MyAppState extends State<MyApp> {
       initialRoute: '/',
       routes: {
         '/' : (context) => const HomePage(),
-        '/login' : (context) => const LoginPage()
+        '/login' : (context) => const LoginPage(),
+        '/joinUser' : (context) => const Joinuser(),
       },
     );
   }

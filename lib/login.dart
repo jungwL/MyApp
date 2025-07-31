@@ -51,6 +51,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
     return emailRegex.hasMatch(email);
   }
 
+  //로그인 API 호출
   Future<void> _login() async {
     final String url = 'http://localhost:8080/api/login';
     try {

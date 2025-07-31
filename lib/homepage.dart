@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -14,6 +15,7 @@ import 'package:http/http.dart' as http;
 import 'footer.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'MyPoint.dart';
+import 'companyInfoPage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -75,6 +77,7 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
+  
   //최상단 이미지 영역 자동 슬라이드 함수
   void _startSlideAutoPlay() {
     _slideTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
@@ -178,34 +181,36 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 20), //간격추가 : 버튼과 설명텍스트 사이 20픽셀 띄움
               Row(
-                //가로로 두개의 버튼 배치를 위해 ROW사용
+                // 가로로 두 개의 버튼 배치
                 children: [
                   Expanded(
-                    //남은 공간을 균등하게 분할해서 버튼 2개를 같은 넓이로 만듬
                     child: OutlinedButton(
-                      // 테두리만 있는 비동의 버튼
                       onPressed: () {
-                        //눌렀을때 팝업 닫고 콘솔에 비동의 로그 출력
                         Navigator.pop(context);
                         print('쿠키 수집 비동의');
                       },
-                      child: const Text('비동의'),
+                      child: const Text(
+                        '비동의',
+                        style: TextStyle(color: Colors.brown),
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 12), //두 버튼 사이 간격 12픽셀
+                  SizedBox(width: 12), // 버튼 간 간격
                   Expanded(
                     child: ElevatedButton(
-                      //강조된 버튼
                       onPressed: () {
-                        //눌렀을때 팝업 닫고 콘솔에 동의 로그 출력
                         Navigator.pop(context);
                         print('쿠키 수집 동의');
                       },
-                      child: const Text('동의'),
+                      child: const Text(
+                        '동의',
+                        style: TextStyle(color: Colors.brown),
+                      ),
                     ),
                   ),
                 ],
               ),
+
             ],
           ),
         );
@@ -457,12 +462,28 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('메인'),
-        centerTitle: true,
         backgroundColor: Colors.orange.shade200,
-        elevation: 4, // 그림자
+        centerTitle: true,
+        title: AnimatedTextKit(
+          animatedTexts: [
+            TyperAnimatedText(
+              'Seoul Baguette',
+              textStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.brown,
+              ),
+              speed: Duration(milliseconds: 100),
+            ),
+          ],
+          pause: Duration(seconds: 2),
+          repeatForever: true,
+          isRepeatingAnimation: true,
+          displayFullTextOnTap: true,
+          stopPauseOnTap: true,
+        ),
         leading: IconButton(
-            onPressed: () {},
+            onPressed: (){}, 
             icon: Icon(Icons.search_rounded)
         ),
       ),
@@ -497,7 +518,28 @@ class _HomePageState extends State<HomePage> {
                           context , '/login'
                       ); // 로그인 화면으로 이동
                     },
-                    child: const Text('로그인하러 가기',)
+                    child: const Text(
+                      '로그인하러 가기',
+                      style: TextStyle(
+                        color: Colors.brown,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  ),
+                  SizedBox(height: 20,),
+                  ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(
+                            context , '/joinUser'
+                        ); // 회원가입 화면으로 이동
+                      },
+                      child: const Text(
+                        '회원가입하러 가기',
+                        style: TextStyle(
+                          color: Colors.brown,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
                   ),
                 ],
               ),
@@ -513,7 +555,6 @@ class _HomePageState extends State<HomePage> {
                 title: const Text('마이 포인트'),
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => MyPointPage()));
-
                 },
               ),
             ],
@@ -529,15 +570,48 @@ class _HomePageState extends State<HomePage> {
               title: const Text('공지사항'),
               onTap: () {
                 Navigator.pop(context);
-                _onItemTapped(1);
               },
             ),
             ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('설정'),
               onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Setting()));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.store),
+              title: const Text('매장정보'),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CompanyMapPage()));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.handshake),
+              title: const Text('창업안내'),
+              onTap: () {
                 Navigator.pop(context);
-                _onItemTapped(1);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.article),
+              title: const Text('매거진'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.shopping_bag),
+              title: const Text('온라인 주문'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.local_offer),
+              title: const Text('프로모션'),
+              onTap: () {
+                Navigator.pop(context);
               },
             ),
           ],
@@ -547,7 +621,7 @@ class _HomePageState extends State<HomePage> {
 
       body: _getBody(),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.orange.shade200,
+        backgroundColor: Colors.black,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         selectedItemColor: Colors.brown,
