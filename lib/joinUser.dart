@@ -1,7 +1,7 @@
+import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
 import 'package:studyex04/User.dart';
 import 'package:studyex04/user_session.dart';
 import 'homepage.dart';
@@ -67,7 +67,6 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
 
       if (response.statusCode == 200) {
         final user = User.fromJson(json.decode(response.body));
-        UserSession.login(user);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
@@ -77,12 +76,16 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('이미 존재하는 회원입니다.')),
         );
+        print('이미 존재하는 회원입니다.');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('회원가입 실패: ${response.statusCode}')),
         );
+        print('회원가입 실패: ${response.statusCode}');
       }
-    } catch (e) {
+    } catch (e,stack) {
+      print('❗ 서버 예외 발생: $e');
+      print('📍 스택 트레이스: $stack');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('서버 오류: ${e.toString()}')),
       );
@@ -127,8 +130,9 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
     return phoneRegex.hasMatch(phone);
   }
 
+  //본인인증 타이머 호출
   void _startTimer() {
-    _remainingSeconds = 5 * 60; // 5분
+    _remainingSeconds = 1 * 60; // 5분
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingSeconds == 0) {
@@ -162,8 +166,9 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
       }
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('회원가입 처리 중입니다...'),
+          content: Text('회원가입이 완료됬습니다. 로그인을 완료하세요'),
           behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.blue,
         ),
       );
       // 회원가입 API 호출 등 처리 가능

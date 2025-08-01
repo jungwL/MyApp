@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:studyex04/joinUser.dart';
 import 'dart:convert';
 import 'User.dart';
 import 'user_session.dart';
 import 'mypage.dart';
 import 'homepage.dart';
+import 'termspage.dart';
 
 class LoginPage extends StatefulWidget {
   final String? redirectTo;
@@ -58,7 +60,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
       final response = await http.post( // post방식 응답 요청
         Uri.parse(url), //서버와 연동
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({ //json방식으로 인코딩 진행
+        body: json.encode({ //json 인코딩 진행
           'userId': _emailController.text.trim(),
           'password': _passwordController.text,
         }),
@@ -103,7 +105,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
     return Scaffold(
       backgroundColor: const Color(0xFFF5F6FA),
       appBar: AppBar(
-        title: const Text('본인인증', style: TextStyle(color: Colors.black87)),
+        title: const Text('본인 인증', style: TextStyle(color: Colors.black87)),
         backgroundColor: Colors.white,
         elevation: 1,
         iconTheme: const IconThemeData(color: Colors.black87),
@@ -208,11 +210,29 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                         }
                       },
                       child: const Text(
-                        '인증하기',
+                        '로그인',
                         style: TextStyle(fontSize: 16, color: Colors.white70),
                       ),
                     ),
                   ),
+                  SizedBox(height: 40,),
+                  Center(
+                    child: TextButton.icon(
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => TermsPage())
+                        );
+                      },
+                      label: Text(
+                        '회원가입하러 가기',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.brown,
+                          fontSize: 16,
+                        ),
+                      ),
+                      icon: const Icon(Icons.keyboard_arrow_right, color: Colors.brown,),
+                    ),
+                  )
                 ],
               ),
             ),

@@ -16,6 +16,7 @@ import 'footer.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'MyPoint.dart';
 import 'companyInfoPage.dart';
+import 'termspage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -109,6 +110,8 @@ class _HomePageState extends State<HomePage> {
   Future<void> _fetchWeather() async {
     // 비동기 작업을 수행하고 아무 값도 반환하지 않는다. async키워드 ==> await 사용가능하게
     var apiKey = dotenv.env['OPENWEATHERMAP_KEY']; //발급받은 API키를 지정 (암호화 필수)
+
+    print('apikey값 : $apiKey');
     final url =
         'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey&units=metric&lang=kr'; //날씨 api요청 URL
 
@@ -223,20 +226,24 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return _buildHomePage();
       case 1:
-        return const Setting();
+        return CompanyMapPage();       // 매장정보
+      case 2:
+        return const SizedBox();       // 온라인 주문
+      case 3:
+        return const Setting();         // 설정
       default:
-        return const SizedBox();
+        return const SizedBox();        // 예외 처리용 빈 위젯
     }
   }
+
 
   Widget _buildHomePage() {
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.only(top: 0, left: 24, right: 24, bottom: 24),
+        padding: const EdgeInsets.only(top: 0, left: 10, right: 10, bottom: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _mainSlide(),
             const SizedBox(height: 24),
             _pageViewBanner(),
             _todayScheduleCard(),
@@ -333,7 +340,7 @@ class _HomePageState extends State<HomePage> {
   //상단 슬라이드위젯
   Widget _mainSlide() {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.9,
+      height: MediaQuery.of(context).size.height, // 전체 화면 높이
       width: double.infinity,
       child: Stack(
         children: [
@@ -351,12 +358,13 @@ class _HomePageState extends State<HomePage> {
                 imagePaths[index],
                 fit: BoxFit.cover,
                 width: double.infinity,
+                height: double.infinity, // 추가
               );
             },
           ),
-          // 인디케이터 위치 조절 (하단 중앙)
+          // 인디케이터 위치 조절
           Positioned(
-            bottom: 16,
+            bottom: 32,
             left: 0,
             right: 0,
             child: Center(
@@ -377,6 +385,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
 
 
   Widget _pageViewBanner() => Column(
@@ -530,7 +539,7 @@ class _HomePageState extends State<HomePage> {
                   ElevatedButton(
                       onPressed: () {
                         Navigator.pushNamed(
-                            context , '/joinUser'
+                            context , '/termspage'
                         ); // 회원가입 화면으로 이동
                       },
                       child: const Text(
@@ -594,8 +603,8 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.article),
-              title: const Text('매거진'),
+              leading: const Icon(Icons.call),
+              title: const Text('고객센터'),
               onTap: () {
                 Navigator.pop(context);
               },
@@ -617,13 +626,48 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(child: _mainSlide()),
+          SliverToBoxAdapter(child: _buildHomePage()),
 
-
-      body: _getBody(),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.black,
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+
+          switch (index) {
+            case 0:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const HomePage()),
+              );
+              break;
+            case 1:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => CompanyMapPage()),
+              );
+              break;
+            case 2:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const Placeholder()), // 온라인 주문 페이지로 변경 가능
+              );
+              break;
+            case 3:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const Setting()),
+              );
+              break;
+          }
+        },
         selectedItemColor: Colors.brown,
         unselectedItemColor: Colors.grey,
         selectedFontSize: 14,
@@ -632,7 +676,15 @@ class _HomePageState extends State<HomePage> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
-            label: '홈'
+            label: '홈',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.store),
+            label: '매장정보',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_bag),
+            label: '온라인 주문',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings_outlined),
@@ -640,6 +692,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
+
     );
   }
 }
