@@ -9,7 +9,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOrigins("http://localhost:57964/") // Flutter Web 디버깅 주소 (크롬에서 실행한 주소)
+                .allowedOrigins("http://localhost:63022/") // Flutter Web 디버깅 주소 (크롬에서 실행한 주소)
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*")
                 .allowCredentials(false);
