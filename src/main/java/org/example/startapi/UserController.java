@@ -11,7 +11,7 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
+    //로그인 API
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO loginRequest) {
         //flutter 요청받은 값 디버깅
@@ -30,7 +30,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패");
         }
     }
-
+    //회원가입 API
     @PostMapping("/joinUser")
     public ResponseEntity<?> joinUser(@RequestBody UserDTO joinUserRequest) {
         System.out.println("------------------ 회원가입 API 호출---------------------- ");
@@ -40,11 +40,12 @@ public class UserController {
         System.out.println("flutter 요청 받은 ID값 : " + joinUserRequest.getPhoneNumber());
 
         boolean isRegistered = userService.registerUser(joinUserRequest);
-
+        System.out.println("isRegistered = " + isRegistered);
+        //반환 true일경우
         if (isRegistered) {
             System.out.println("회원가입 성공: " + joinUserRequest.getUserId());
-            return ResponseEntity.ok("회원가입 성공");
-        } else {
+            return ResponseEntity.ok(joinUserRequest);
+        } else { //반환 값이 false일 경우
             System.out.println("회원가입 실패 - 중복된 아이디: " + joinUserRequest.getUserId());
             return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 아이디입니다.");
         }
