@@ -14,11 +14,12 @@ class User {
     required this.phoneNumber
   });
 
+  //JSON 형식의 데이터를 ==> User 객체로 변환
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       userId: json['userId'],
       password: json['password'],
-      userName: json['userName'], //  JSON 파싱에 추가
+      userName: json['userName'],
       userPoint: json['userPoint'],
       phoneNumber: json['phoneNumber']
     );
