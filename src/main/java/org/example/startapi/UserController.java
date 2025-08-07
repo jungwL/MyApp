@@ -40,6 +40,7 @@ public class UserController {
         System.out.println("flutter 요청 받은 ID값 : " + joinUserRequest.getPhoneNumber());
 
         boolean isRegistered = userService.registerUser(joinUserRequest);
+
         System.out.println("isRegistered = " + isRegistered);
         //반환 true일경우
         if (isRegistered) {

@@ -8,10 +8,10 @@ import org.springframework.web.servlet.config.annotation.*;
 public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**")
-                .allowedOrigins("http://localhost:63022/") // Flutter Web 디버깅 주소 (크롬에서 실행한 주소)
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
-                .allowedHeaders("*")
-                .allowCredentials(false);
+        registry.addMapping("/api/**") //
+                .allowedOrigins("http://localhost:54213/") // Flutter Web 디버깅 주소 (크롬에서 실행한 주소)
+                .allowedMethods("GET", "POST", "PUT", "DELETE") // CRUD 요청 모두허용
+                .allowedHeaders("*") //모든 HTTP Header 허용
+                .allowCredentials(false); //쿠키, 세션정보 허용 여부
     }
 }
