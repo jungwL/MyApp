@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:studyex04/joinUser.dart';
+import 'package:studyex04/screens/joinUser.dart';
 import 'dart:convert';
-import 'User.dart';
-import 'user_session.dart';
+import '../models/User.dart';
+import '../models/user_session.dart';
 import 'mypage.dart';
-import 'homepage.dart';
+import '../homepage.dart';
 import 'termspage.dart';
+import '../widgets/customAppBar.dart';
+import '../widgets/customBottomNai.dart';
 
 class LoginPage extends StatefulWidget {
   final String? redirectTo;
@@ -103,12 +105,13 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F6FA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('본인 인증', style: TextStyle(color: Colors.black87)),
-        backgroundColor: Colors.white,
+        centerTitle: true,
+        title: const Text('본인 인증',),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 1,
-        iconTheme: const IconThemeData(color: Colors.black87),
+        iconTheme: const IconThemeData(),
       ),
       body: SafeArea(
         child: FadeTransition(
@@ -122,13 +125,17 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                 children: [
                   const Text(
                     '이메일과 비밀번호를 입력해 로그인하세요.',
-                    style: TextStyle(color: Colors.black),
                   ),
                   const SizedBox(height: 32),
                   TextFormField(
                     cursorColor: Colors.brown,
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
+                    style: TextStyle(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white // 다크모드일 때 연한 흰색
+                          : Colors.black,  // 라이트모드일 때 완전 흰색,
+                    ),
                     decoration: InputDecoration(
                       hintText: 'example@example.com',
                       hintStyle: TextStyle(
@@ -141,7 +148,9 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                       ),
                       prefixIcon: const Icon(Icons.email_outlined),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white10 // 다크모드일 때 연한 흰색
+                          : Colors.white,  // 라이트모드일 때 완전 흰색,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -173,7 +182,9 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                       ),
                       prefixIcon: const Icon(Icons.lock_outline),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white10 // 다크모드일 때 연한 흰색
+                          : Colors.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

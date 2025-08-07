@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:studyex04/login.dart';
+import 'package:studyex04/screens/login.dart';
 import 'homepage.dart'; // 메인 홈 화면
-import 'termspage.dart';
+import 'screens/termspage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -47,8 +47,14 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Start App',
-      theme: ThemeData.light(useMaterial3: true),
-      darkTheme: ThemeData.dark(useMaterial3: true),
+      theme: ThemeData.light(useMaterial3: true,).copyWith(
+        scaffoldBackgroundColor: Colors.white,
+        cardColor: Colors.orange.shade50,
+      ),
+      darkTheme: ThemeData.dark(useMaterial3: true).copyWith(
+        cardColor: Colors.grey[800],
+
+      ),
       themeMode: _themeMode,
       initialRoute: '/',
       routes: {

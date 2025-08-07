@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:studyex04/user_session.dart';
-import 'main.dart'; // MyApp 상태 접근
-import 'login.dart';
+import 'package:studyex04/models/user_session.dart';
+import '../main.dart'; // MyApp 상태 접근
+import 'cs_page.dart';
 
 class Setting extends StatefulWidget {
   const Setting({super.key});
@@ -197,26 +197,9 @@ class _SettingState extends State<Setting> {
               ),
               onTap: () {
                 // 카드 눌렀을 때 실행되는 함수
-                showDialog(
-                  // 다이얼로그(팝업)를 띄움
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16), // 다이얼로그 모서리 둥글게
-                    ),
-                    title: const Text('고객센터 안내'), // 다이얼로그 제목
-                    content: const Text(
-                      '📞 전화: 1234-5678\n✉️ 이메일: support@example.com\n⏰ 운영시간: 평일 9:00 ~ 18:00',
-                    ), // 다이얼로그 내용
-                    actions: [
-                      TextButton(
-                        // 다이얼로그 하단 닫기 버튼
-                        onPressed: () =>
-                            Navigator.pop(context), // 닫기 누르면 다이얼로그 닫힘
-                        child: const Text('닫기'), // 버튼 텍스트
-                      ),
-                    ],
-                  ),
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CsPage())
                 );
               },
             ),
@@ -296,8 +279,14 @@ class _SettingState extends State<Setting> {
               ),
               onPressed: () {
                 //로그아웃구현
-                UserSession.logout();
-                Navigator.pushNamedAndRemoveUntil(context, '/login', (route)=>false); //새 라우트를 push 하고 기존 스택들을 전부 제거
+                if(UserSession.isLoggedIn){
+                  UserSession.logout();
+                }else {
+                  Navigator.pushNamed(
+                    context,
+                    '/login',
+                  ); // 로그인 화면으로 이동
+                }
               },
             ),
           ),
