@@ -2,14 +2,14 @@
 class User {
   final String userId;
   final String password;
-  final String userName; //  추가됨
+  final String userName;
   final int userPoint;
-  final String phoneNumber;
+  final String phoneNumber;// 연락처 추가됨
 
   User({
     required this.userId,
     required this.password,
-    required this.userName, //  생성자에 추가
+    required this.userName,
     required this.userPoint,
     required this.phoneNumber
   });

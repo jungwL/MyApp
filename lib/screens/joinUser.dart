@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:studyex04/User.dart';
-import 'package:studyex04/user_session.dart';
-import 'homepage.dart';
+import 'package:studyex04/models/User.dart';
+import 'package:studyex04/models/user_session.dart';
+import '../homepage.dart';
 
 class Joinuser extends StatefulWidget {
   const Joinuser({super.key});
@@ -47,47 +47,67 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
     return true; //위 두 조건을 만족하는 경우 true반환
   }
 
-  //회원가입 API호출
+// 회원가입 API를 호출하는 비동기 함수
   Future<void> _joinUser() async {
+    // 요청을 보낼 백엔드 API 주소 (Spring Boot 서버)
     final String url = 'http://localhost:8080/api/joinUser';
 
     try {
+      // HTTP POST 요청을 보냄 (사용자 입력 값을 JSON으로 변환해서 전송)
       final response = await http.post(
-        Uri.parse(url),
-        headers: {'Content-Type': 'application/json'},
+        Uri.parse(url), // 문자열 URL을 Uri 객체로 변환
+        headers: {'Content-Type': 'application/json'}, // 요청 헤더에 JSON 형식임을 명시
         body: json.encode({
-          'userName': _nameController.text,
-          'userId': _emailController.text,
-          'password': _passwordController.text,
-          'phoneNumber': _phoneController.text,
+          'userName': _nameController.text,        // 사용자 이름
+          'userId': _emailController.text,         // 사용자 이메일(ID)
+          'password': _passwordController.text,    // 사용자 비밀번호
+          'phoneNumber': _phoneController.text,    // 사용자 전화번호
         }),
       );
-
-      print('http 응답코드 : ${response.statusCode}');
-
+      print('HTTP 요청 코드 :  ${response.statusCode}');
+      // 서버가 200 OK 응답을 보낸 경우 → 회원가입 성공
       if (response.statusCode == 200) {
+        // 응답받은 JSON 데이터를 User 객체로 변환
         final user = User.fromJson(json.decode(response.body));
+
+        // 상단에 파란색 알림 표시 (회원가입 성공 메시지)
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('회원가입이 완료됬습니다. 로그인을 완료하세요'),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.blue,
+          ),
+        );
+
+        // 홈 페이지로 이동하면서 현재 화면 제거 (뒤로 못 돌아가게)
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
         );
+
+        // 서버 응답이 409 Conflict인 경우 → 이미 가입된 ID
       } else if (response.statusCode == 409) {
-        // 예: 이미 가입된 사용자일 경우
+        // 경고 메시지 출력
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('이미 존재하는 회원입니다.')),
         );
         print('이미 존재하는 회원입니다.');
+
+        // 그 외의 다른 실패 응답
       } else {
+        // 에러 상태 코드와 함께 스낵바 표시
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('회원가입 실패: ${response.statusCode}')),
         );
         print('회원가입 실패: ${response.statusCode}');
       }
-    } catch (e,stack) {
-      print('❗ 서버 예외 발생: $e');
-      print('📍 스택 트레이스: $stack');
+
+      // 예외가 발생한 경우 (예: 서버 연결 실패, JSON 오류 등)
+    } catch (e, stack) {
+      print('서버 예외 발생: $e');           // 예외 메시지 출력
+      print('스택 트레이스: $stack');        // 어디서 예외가 났는지 추적
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('서버 오류: ${e.toString()}')),
+        SnackBar(content: Text('서버 오류: ${e.toString()}')),  // 사용자에게 오류 메시지 표시
       );
     }
   }
@@ -120,11 +140,13 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
     super.dispose();
   }
 
+  //이메일 형식 유효성 검사
   bool _isValidEmail(String email) {
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     return emailRegex.hasMatch(email);
   }
 
+  //연락처 형식 유효성 검사
   bool _isValidPhone(String phone) {
     final phoneRegex = RegExp(r'^\d{10,11}$'); // 10~11자리 숫자만 허용 (전화번호 형식)
     return phoneRegex.hasMatch(phone);
@@ -132,7 +154,7 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
 
   //본인인증 타이머 호출
   void _startTimer() {
-    _remainingSeconds = 1 * 60; // 5분
+    _remainingSeconds = 1 * 60; // 1분
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingSeconds == 0) {
@@ -164,13 +186,6 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
         );
         return;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('회원가입이 완료됬습니다. 로그인을 완료하세요'),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: Colors.blue,
-        ),
-      );
       // 회원가입 API 호출 등 처리 가능
       _joinUser();
     }
@@ -179,12 +194,13 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F6FA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('회원가입', style: TextStyle(color: Colors.black87)),
-        backgroundColor: Colors.white,
+        title: const Text('회원가입'),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 1,
-        iconTheme: const IconThemeData(color: Colors.black87),
+        iconTheme: const IconThemeData(),
       ),
       body: SafeArea(
         child: FadeTransition(
@@ -198,7 +214,6 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
                 children: [
                   const Text(
                     '회원가입을 위해 정보를 입력하세요.',
-                    style: TextStyle(color: Colors.black),
                   ),
                   const SizedBox(height: 32),
 
@@ -210,7 +225,9 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
                       labelStyle: const TextStyle(color: Colors.brown),
                       prefixIcon: const Icon(Icons.person_outline),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white10 // 다크모드일 때 연한 흰색
+                          : Colors.white,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -236,7 +253,9 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
                       labelStyle: const TextStyle(color: Colors.brown),
                       prefixIcon: const Icon(Icons.email_outlined),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white10 // 다크모드일 때 연한 흰색
+                          : Colors.white,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -264,7 +283,9 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
                       labelStyle: const TextStyle(color: Colors.brown),
                       prefixIcon: const Icon(Icons.lock_outline),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white10 // 다크모드일 때 연한 흰색
+                          : Colors.white,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -292,7 +313,9 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
                       labelStyle: const TextStyle(color: Colors.brown),
                       prefixIcon: const Icon(Icons.phone_outlined),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white10 // 다크모드일 때 연한 흰색
+                          : Colors.white,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -329,7 +352,9 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
                                 labelStyle: const TextStyle(color: Colors.brown),
                                 prefixIcon: const Icon(Icons.vpn_key_outlined),
                                 filled: true,
-                                fillColor: Colors.white,
+                                fillColor: Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white10 // 다크모드일 때 연한 흰색
+                                    : Colors.white,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
