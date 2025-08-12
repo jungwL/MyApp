@@ -1,9 +1,13 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:studyex04/models/UserQna.dart';
 import '../models/user_session.dart';
 import 'login.dart';
 import '../widgets/customDrawer.dart';
 import '../widgets/customAppBar.dart';
 import '../widgets/customBottomNai.dart';
+import '../models/user_session.dart';
 
 class CsPage extends StatefulWidget {
   const CsPage({super.key});
@@ -55,7 +59,7 @@ class _CsPageState extends State<CsPage> with SingleTickerProviderStateMixin {
                   ),
                 ),
               ),
-              const SizedBox(width: 48,)
+              const SizedBox(width: 48),
             ],
           ),
           const SizedBox(height: 16),
@@ -91,146 +95,323 @@ class InquiryTab extends StatefulWidget {
 }
 
 class _InquiryTabState extends State<InquiryTab> {
-  List<String> inquiryList = [
+  List<UserQna> inquiryList = [];
 
-  ]; // 예시 데이터. 실제로는 API로 가져오면 됨.
+  @override
+  void initState() {
+    super.initState();
+
+    final phone = UserSession.currentUser?.phoneNumber ?? '';
+    if (phone.isNotEmpty) {
+      fetchInquiryList(phone);
+    }
+  }
+
+  //입력값을 받을 변수 선언
+  final TextEditingController _titleController = TextEditingController(); //제목
+  final TextEditingController _contentController = TextEditingController(); //내용
+  final TextEditingController _nameController = TextEditingController(); //이름
+  final TextEditingController _phoneController = TextEditingController(); //폰번호
+  final TextEditingController _emailController = TextEditingController(); //이메일
+
+  final _formKey = GlobalKey<FormState>();
+
+  String selectedConsultType = '문의';
+  String selectedContentType = '제품';
+
+  //전화번호 기반 1:1문의 리스트 비동기 호출
+  Future<void> fetchInquiryList(String phone) async {
+    final url = Uri.parse('http://localhost:8080/api/qna/list?phone=$phone');
+    try {
+      final response = await http.get(url);
+
+      print('1대1문의 리스트 응답코드 ${response.statusCode}');
+      if (response.statusCode == 200) {
+        List<dynamic> jsonList = json.decode(response.body);
+        List<UserQna> loadedList = jsonList
+            .map((item) => UserQna.fromJson(item as Map<String, dynamic>))
+            .toList();
+        setState(() {
+          inquiryList = loadedList;
+        });
+        print('첫 번째 문의 날짜: ${inquiryList[0].addTime}');
+      }else {
+        print('문의 내역이 없습니다.');
+      }
+    } catch (e) {
+      print('문의 목록 불러오기 실패: $e');
+    }
+  }
+
+  // 1대1 문의 등록 비동기 함수
+  Future<void> _submit() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        final response = await http.post(
+          Uri.parse("http://localhost:8080/api/qna"),
+          headers: {"Content-Type": "application/json"},
+          body: json.encode({
+            'consultType': selectedConsultType,
+            'contentType': selectedContentType,
+            'title': _titleController.text.trim(),
+            'content': _contentController.text.trim(),
+            'name': _nameController.text.trim(),
+            'phone': UserSession.currentUser!.phoneNumber,
+            'email': _emailController.text.trim(),
+            'addTime': DateTime.now().toIso8601String(),//현재입력된 시간을 String 값으로 형변환해서 넘김
+
+          }),
+        );
+
+        if (response.statusCode == 200) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text("등록 완료")));
+          // 초기화
+          _titleController.clear();
+          _contentController.clear();
+          _nameController.clear();
+          _emailController.clear();
+          setState(() {
+            selectedConsultType = '문의';
+            selectedContentType = '제품';
+          });
+
+          // 문의 목록 갱신
+          final phone = UserSession.currentUser?.phoneNumber ?? '';
+          await fetchInquiryList(phone);
+        } else {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text("오류: ${response.statusCode}")));
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("통신 실패: $e")));
+      }
+    }
+  }
 
   void _showInquiryForm() {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        String inquiryText = '';
-        String title = '';
-        String name = '';
-        String phone = '';
-        String email = '';
-        String selectedConsultType = '문의';
-        String selectedContentType = '제품';
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '1:1 문의 작성',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.brown[700], // 포인트 컬러
+                          ),
+                        ),
+                        const SizedBox(height: 20),
 
-        return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  '1:1 문의 작성',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
+                        // 상담유형
+                        DropdownButtonFormField<String>(
+                          value: selectedConsultType,
+                          items: ['칭찬', '불만', '문의', '제안', '정보']
+                              .map(
+                                (type) => DropdownMenuItem(
+                                  value: type,
+                                  child: Text(type),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: (value) {
+                            if (value != null) {
+                              setStateDialog(() {
+                                selectedConsultType = value;
+                              });
+                            }
+                          },
+                          decoration: _inputDecoration('상담유형'),
+                        ),
+                        const SizedBox(height: 16),
 
-                // 상담유형
-                DropdownButtonFormField<String>(
-                  value: selectedConsultType,
-                  items: ['칭찬', '불만', '문의', '제안', '정보'].map((String type) {
-                    return DropdownMenuItem(value: type, child: Text(type));
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      selectedConsultType = value;
-                    }
-                  },
-                  decoration: const InputDecoration(labelText: '상담유형'),
-                ),
+                        // 내용유형
+                        DropdownButtonFormField<String>(
+                          value: selectedContentType,
+                          items: ['제품', '모바일쿠폰', '인적서비스', '정보서비스', '이벤트', '기타']
+                              .map(
+                                (type) => DropdownMenuItem(
+                                  value: type,
+                                  child: Text(type),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: (value) {
+                            if (value != null) {
+                              setStateDialog(() {
+                                selectedContentType = value;
+                              });
+                            }
+                          },
+                          decoration: _inputDecoration('내용유형'),
+                        ),
+                        const SizedBox(height: 16),
 
-                // 내용유형
-                DropdownButtonFormField<String>(
-                  value: selectedContentType,
-                  items: [
-                    '제품',
-                    '모바일쿠폰',
-                    '인적서비스',
-                    '정보서비스',
-                    '이벤트',
-                    '기타'
-                  ].map((String type) {
-                    return DropdownMenuItem(value: type, child: Text(type));
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      selectedContentType = value;
-                    }
-                  },
-                  decoration: const InputDecoration(labelText: '내용유형'),
-                ),
+                        // 제목
+                        TextFormField(
+                          controller: _titleController,
+                          decoration: _inputDecoration('제목'),
+                          validator: (value) =>
+                              value == null || value.trim().isEmpty
+                              ? '제목을 입력해주세요.'
+                              : null,
+                        ),
+                        const SizedBox(height: 16),
 
-                // 제목
-                TextFormField(
-                  onChanged: (value) => title = value,
-                  decoration: const InputDecoration(labelText: '제목'),
-                ),
+                        // 문의내용
+                        TextFormField(
+                          controller: _contentController,
+                          decoration: _inputDecoration('문의 내용'),
+                          maxLines: 4,
+                          validator: (value) =>
+                              value == null || value.trim().isEmpty
+                              ? '문의 내용을 입력해주세요.'
+                              : null,
+                        ),
+                        const SizedBox(height: 16),
 
-                // 내용
-                TextFormField(
-                  onChanged: (value) => inquiryText = value,
-                  decoration: const InputDecoration(labelText: '문의 내용'),
-                  maxLines: 4,
-                ),
+                        // 이름
+                        TextFormField(
+                          controller: _nameController,
+                          decoration: _inputDecoration('이름'),
+                          validator: (value) =>
+                              value == null || value.trim().isEmpty
+                              ? '이름을 입력해주세요.'
+                              : null,
+                        ),
+                        const SizedBox(height: 16),
 
-                // 이름
-                TextFormField(
-                  onChanged: (value) => name = value,
-                  decoration: const InputDecoration(labelText: '이름'),
-                ),
+                        // 전화번호 (readOnly)
+                        TextFormField(
+                          controller: TextEditingController(
+                            text: _formatPhoneNumber(
+                              UserSession.currentUser!.phoneNumber,
+                            ),
+                          ),
+                          readOnly: true,
+                          keyboardType: TextInputType.phone,
+                          decoration: _inputDecoration('전화번호'),
+                        ),
+                        const SizedBox(height: 16),
 
-                // 전화번호
-                TextFormField(
-                  keyboardType: TextInputType.phone,
-                  onChanged: (value) => phone = value,
-                  decoration: const InputDecoration(labelText: '전화번호'),
-                ),
+                        // 이메일
+                        TextFormField(
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: _inputDecoration('이메일'),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return '이메일을 입력해주세요.';
+                            }
+                            if (!RegExp(
+                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                            ).hasMatch(value.trim())) {
+                              return '유효한 이메일을 입력해주세요.';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 24),
 
-                // 이메일
-                TextFormField(
-                  keyboardType: TextInputType.emailAddress,
-                  onChanged: (value) => email = value,
-                  decoration: const InputDecoration(labelText: '이메일'),
-                ),
-
-                const SizedBox(height: 20),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('취소'),
+                        // 버튼
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 14,
+                                ),
+                                side: BorderSide(color: Colors.brown[300]!),
+                              ),
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text('취소'),
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.brown[400],
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 14,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  await _submit();
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                              child: const Text(
+                                '등록',
+                                style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (inquiryText.isNotEmpty) {
-                          setState(() {
-                            inquiryList.insert(
-                              0,
-                              '${DateTime.now().toString().substring(0, 10)} : [$title] $inquiryText',
-                            );
-                          });
-                          Navigator.of(context).pop();
-                        }
-                      },
-                      child: const Text('등록'),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
+                  ),
+                ),
+              ),
+            );
+          },
         );
       },
     );
   }
 
+  // 공통 Input 스타일 함
+  InputDecoration _inputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.brown[400]!),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    );
+  }
+
+  // 전화번호 포맷 함수
+  String _formatPhoneNumber(String phone) {
+    String digits = phone.replaceAll(RegExp(r'\D'), '');
+    if (digits.length == 11) {
+      return '${digits.substring(0, 3)}-${digits.substring(3, 7)}-${digits.substring(7)}';
+    }
+    return phone;
+  }
 
   void _onInquiryButtonPressed() {
     if (!UserSession.isLoggedIn) {
-      // 로그인 안 되어 있으면 로그인 페이지로 이동
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const LoginPage()),
       );
     } else {
-      // 로그인 되어 있으면 바로 문의 폼 띄움
       _showInquiryForm();
     }
   }
@@ -239,19 +420,19 @@ class _InquiryTabState extends State<InquiryTab> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 50),
-        Text(
+        const SizedBox(height: 50),
+        const Text(
           '1:1 문의',
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 20),
-        Text(
+        const SizedBox(height: 20),
+        const Text(
           '신속히 답변 드리겠습니다.',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14, color: Colors.grey),
         ),
-        SizedBox(height: 30),
-        Divider(thickness: 1),
+        const SizedBox(height: 30),
+        const Divider(thickness: 1),
         const SizedBox(height: 20),
         ElevatedButton(
           onPressed: _onInquiryButtonPressed,
@@ -268,26 +449,42 @@ class _InquiryTabState extends State<InquiryTab> {
           ),
         ),
         const SizedBox(height: 20),
-        UserSession.isLoggedIn
-            ? Expanded(
-                child: inquiryList.isEmpty
-                    ? const Center(child: Text('문의 내역이 없습니다.'))
+        Expanded(
+          child: UserSession.isLoggedIn
+              ? (inquiryList.isEmpty
+                    ? const Center(child: Text('문의 내역이 없습니다.')) // 문의 내역이 없을 경우
                     : ListView.builder(
+                        // 로그인 상태일 경우 && inquiryList에 값이 들어있을 경우 해당 고객의 문의 내역 정보를 가져온다.
                         itemCount: inquiryList.length,
                         itemBuilder: (context, index) {
-                          return ListTile(
-                            leading: const Icon(
-                              Icons.chat_bubble_outline,
-                              color: Colors.blue,
+                          final inquiry = inquiryList[index];
+                          return ExpansionTile(
+                            leading: Icon(
+                              Icons.question_answer,
+                              color: Colors.orange.shade200,
                             ),
-                            title: Text(inquiryList[index]),
+                            title: Text(
+                              '[${inquiry.addTime.year}-${inquiry.addTime.month.toString().padLeft(2, '0')}-${inquiry.addTime.day.toString().padLeft(2, '0')}] 제목 : ${inquiry.title}',
+                            ),
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  '문의 내용 : ${inquiry.content}',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                            ],
                           );
                         },
-                      ),
-              )
-            : const Expanded(
-                child: Center(child: Text('문의 내역을 보시려면 로그인 해주세요.')),
-              ),
+                      )
+                    )
+              : const Center(child: Text('문의 내역을 보시려면 로그인 해주세요.')), //비로그인시
+        ),
       ],
     );
   }
@@ -332,7 +529,7 @@ class PraiseTab extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           const Text(
-            '서울바게트 칭찬점포를 소개합니다. 고객 여러분의 칭찬과 격려에 감사 드립니다!',
+            '서울바게트 칭찬점포를 소개합니다.',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 14, color: Colors.grey),
           ),
@@ -346,7 +543,10 @@ class PraiseTab extends StatelessWidget {
               itemBuilder: (context, index) {
                 final store = praiseStores[index];
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   elevation: 3,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -367,12 +567,19 @@ class PraiseTab extends StatelessWidget {
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                            const Icon(
+                              Icons.location_on,
+                              size: 16,
+                              color: Colors.grey,
+                            ),
                             const SizedBox(width: 4),
                             Expanded(
                               child: Text(
                                 store['location']!,
-                                style: const TextStyle(fontSize: 14, color: Colors.grey),
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
                               ),
                             ),
                           ],
@@ -400,8 +607,7 @@ class FAQTab extends StatelessWidget {
   final List<Map<String, String>> faqList = [
     {
       'question': '한 제품 구매 시 여러 개의 교환권을 한번에 사용할 수 있나요?',
-      'answer':
-      '모바일금액권은 액면가액과 동일하거나 그 이상만 결제할 수 있습니다. 교환권은 최대 6개까지 사용 가능합니다.',
+      'answer': '모바일금액권은 액면가액과 동일하거나 그 이상만 결제할 수 있습니다. 교환권은 최대 6개까지 사용 가능합니다.',
     },
     {
       'question': '사업설명회를 참석하려면 어떻게 해야 하나요?',
@@ -415,14 +621,8 @@ class FAQTab extends StatelessWidget {
       'question': '매장 정보는 어떻게 알수 있나요?',
       'answer': '담당자와 상담을 통해 자세히 안내받으실 수 있습니다.',
     },
-    {
-      'question': '비닐 봉투는 유상 제공인가요?',
-      'answer': '담당자와 상담을 통해 자세히 안내받으실 수 있습니다.',
-    },
-    {
-      'question': '멤버십 적립은 어떻게 하나요?',
-      'answer': '담당자와 상담을 통해 자세히 안내받으실 수 있습니다.',
-    },
+    {'question': '비닐 봉투는 유상 제공인가요?', 'answer': '담당자와 상담을 통해 자세히 안내받으실 수 있습니다.'},
+    {'question': '멤버십 적립은 어떻게 하나요?', 'answer': '담당자와 상담을 통해 자세히 안내받으실 수 있습니다.'},
     {
       'question': '마진율 및 수익구조는 어떻게 되나요?',
       'answer': '담당자와 상담을 통해 자세히 안내받으실 수 있습니다.',
@@ -470,7 +670,7 @@ class FAQTab extends StatelessWidget {
                         color: Colors.black87,
                       ),
                     ),
-                  )
+                  ),
                 ],
               );
             },
@@ -480,4 +680,3 @@ class FAQTab extends StatelessWidget {
     );
   }
 }
-

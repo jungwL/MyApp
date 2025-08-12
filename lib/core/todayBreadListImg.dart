@@ -1,12 +1,5 @@
-import 'package:flutter/material.dart';
-import '../screens/todayBreadList.dart';
 
 // 오늘의 바게트
-class TodayBaguette extends StatelessWidget {
-  const TodayBaguette({super.key});
-
-  @override
-  Widget build(BuildContext context) {
     final List<Map<String, String>> baguetteList = [
       {
         'name': '바게트',
@@ -28,16 +21,7 @@ class TodayBaguette extends StatelessWidget {
       },
     ];
 
-    return BreadItemList(breadList: baguetteList);
-  }
-}
-
 //오늘의 빵
-class TodayBread extends StatelessWidget {
-  const TodayBread({super.key});
-
-  @override
-  Widget build(BuildContext context) {
     final List<Map<String, String>> breadList = [
       {
         'name': '치아바타',
@@ -65,15 +49,7 @@ class TodayBread extends StatelessWidget {
       },
     ];
 
-    return BreadItemList(breadList: breadList);
-  }
-}
 // 오늘의 샌드위치
-class TodaySand extends StatelessWidget {
-  const TodaySand({super.key});
-
-  @override
-  Widget build(BuildContext context) {
     final List<Map<String, String>> sandList = [
       {
         'name': '딸기잼 샌드위치',
@@ -101,16 +77,8 @@ class TodaySand extends StatelessWidget {
       },
     ];
 
-    return BreadItemList(breadList: sandList);
-  }
-}
 
 // 오늘의 케이크
-class TodayCake extends StatelessWidget {
-  const TodayCake({super.key});
-
-  @override
-  Widget build(BuildContext context) {
     final List<Map<String, String>> cakeList = [
       {
         'name': '초코 케이크',
@@ -137,7 +105,3 @@ class TodayCake extends StatelessWidget {
         'price': '₩12,000',
       },
     ];
-
-    return BreadItemList(breadList: cakeList);
-  }
-}

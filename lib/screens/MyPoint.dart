@@ -18,20 +18,22 @@ class _MyPointPageState extends State<MyPointPage> with SingleTickerProviderStat
   late final AnimationController _controller;
   late final Animation<int> _pointAnimation;
 
+  //로그인 user 데이터
+  final userName = UserSession.currentUser?.userName ?? 'UNKNOWN';
+  final userId = UserSession.currentUser?.userId ?? 'UNKNOWN';
+  final userPoint = UserSession.currentUser?.userPoint ?? 0;
+
   @override
   void initState() {
     super.initState();
-    int targetPoints = UserSession.currentUser?.userPoint ?? 0;
 
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
     );
-
-    _pointAnimation = IntTween(begin: 0, end: targetPoints).animate(
+    _pointAnimation = IntTween(begin: 0, end: userPoint).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
     );
-
     _controller.forward();
   }
 
@@ -43,12 +45,6 @@ class _MyPointPageState extends State<MyPointPage> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-
-    //로그인 user 데이터
-    final userName = UserSession.currentUser?.userName ?? 'UNKNOWN';
-    final userId = UserSession.currentUser?.userId ?? 'UNKNOWN';
-    final userPoint = UserSession.currentUser?.userPoint ?? 0;
-
     final barcodeData = '$userId:$userPoint'; // 바코드안 넣을 데이터
 
     return Scaffold(

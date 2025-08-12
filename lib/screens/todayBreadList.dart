@@ -3,7 +3,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../widgets/customAppBar.dart';
 import '../widgets/customBottomNai.dart';
 import '../widgets/customDrawer.dart';
-import '../core/todayBreadList.dart';
+import '../core/todayBreadListImg.dart';
 
 class TodayBreadList extends StatefulWidget {
   const TodayBreadList({super.key});
@@ -90,11 +90,11 @@ class _TodayBreadListState extends State<TodayBreadList> with SingleTickerProvid
           Expanded(
               child: TabBarView(
                   controller: _tabBreadController,
-                  children: const [
-                    TodayCake(),
-                    TodayBaguette(),
-                    TodayBread(),
-                    TodaySand(),
+                  children: [
+                    BreadItemList(breadList: cakeList),
+                    BreadItemList(breadList: baguetteList),
+                    BreadItemList(breadList: breadList),
+                    BreadItemList(breadList: sandList),
                   ]
               ),
           ),

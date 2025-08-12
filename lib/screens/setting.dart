@@ -61,7 +61,7 @@ class _SettingState extends State<Setting> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              subtitle: const Text('화면을 어둡게 하여 눈의 피로를 줄입니다'), //타일의 부제목 텍스트
+              subtitle: const Text('화면을 어둡게 합니다'), //타일의 부제목 텍스트
               value: isDark, //스위치 상태를 isDartk 변구 값에 따라 결정(on/off)
               activeColor: Colors.brown, //스위치가 on일 때 표시할 색상 지정
               onChanged: (value) {
@@ -161,7 +161,7 @@ class _SettingState extends State<Setting> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              subtitle: const Text('1.0.0+1'),
+              subtitle: const Text('1.0.0'),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
