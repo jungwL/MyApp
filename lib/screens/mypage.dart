@@ -11,12 +11,13 @@ class MyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F6FA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('마이페이지', style: TextStyle(color: Colors.black87)),
-        backgroundColor: Colors.white,
+        title: const Text('마이페이지'),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 1,
-        iconTheme: const IconThemeData(color: Colors.black87),
+        iconTheme: const IconThemeData(),
       ),
       body: Padding(
         padding: const EdgeInsets.all(24),

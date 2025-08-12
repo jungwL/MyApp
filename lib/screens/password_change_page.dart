@@ -45,12 +45,13 @@ class PasswordChangePage extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('비밀번호 변경'),
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
+        backgroundColor: theme.scaffoldBackgroundColor,
+        foregroundColor: theme.textTheme.bodyLarge?.color,
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(24),

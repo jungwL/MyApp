@@ -7,7 +7,6 @@ final List<String> bannerImages = [
 
 // 슬라이드 이미지
 final List<String> imagePaths = [
-  'assets/images/slide1.png',
   'assets/images/slide2.png',
   'assets/images/slide3.png',
 ];

@@ -23,7 +23,7 @@ class _MyAppState extends State<MyApp> {
   // 다크모드 적용시 호출 되는 메서
   void toggleTheme(bool isDark) {
     // setting page value 값을 매개변수로 받음
-    print(isDark);
+    print('다크 모드 여부 값 : $isDark');
     setState(() {
       // isDark = true면 다크모드 아니면 light모드 실행
       // _themeMode = isDark ? ThemeMode.dark : ThemeMode.light; > 삼항 연산자 구문
@@ -49,7 +49,7 @@ class _MyAppState extends State<MyApp> {
       title: 'Start App',
       theme: ThemeData.light(useMaterial3: true,).copyWith(
         scaffoldBackgroundColor: Colors.white,
-        cardColor: Colors.orange.shade50,
+        cardColor: Colors.white70,
       ),
       darkTheme: ThemeData.dark(useMaterial3: true).copyWith(
         cardColor: Colors.grey[800],

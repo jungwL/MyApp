@@ -10,15 +10,15 @@ class Footer extends StatelessWidget {
       color: const Color(0xFF3A3E47),
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Info + Logo
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: const [
                     Text(
                       "Info",
@@ -39,7 +39,6 @@ class Footer extends StatelessWidget {
                     FooterLink("윤리신고센터"),
                     FooterLink("채용"),
                     SizedBox(height: 20),
-                    ImageFooter(), // 이미지 추가 위치
                   ],
                 ),
               ),
@@ -47,7 +46,7 @@ class Footer extends StatelessWidget {
               // Contact Us + Follow Us
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const Text(
                       "Contact Us",
@@ -71,6 +70,7 @@ class Footer extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
                         Icon(FontAwesomeIcons.facebookF, color: Colors.white),
                         SizedBox(width: 15),
@@ -86,6 +86,7 @@ class Footer extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           const Divider(color: Colors.white24),
+          ImageFooter(), // 이미지 추가 위치
           const SizedBox(height: 10),
           const Text(
             "All Rights Reserved © SEOUL BAGUETTE, Seoul CROISSANT",
@@ -112,7 +113,8 @@ class ImageFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     return Image.asset(
       'images/Logo1.png',
-      width: 250,
+      width: 200,
+      height: 100,
     );
   }
 }

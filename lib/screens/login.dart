@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:studyex04/screens/joinUser.dart';
 import 'dart:convert';
 import '../models/User.dart';
 import '../models/user_session.dart';
 import 'mypage.dart';
 import '../homepage.dart';
 import 'termspage.dart';
-import '../widgets/customAppBar.dart';
-import '../widgets/customBottomNai.dart';
 
 class LoginPage extends StatefulWidget {
   final String? redirectTo;
@@ -26,7 +23,6 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   late AnimationController _animationController;
   late Animation<double> _fadeIn;
 
-  String _resultMessage = '';
 
   @override
   void initState() {
@@ -230,8 +226,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                   Center(
                     child: TextButton.icon(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => TermsPage())
-                        );
+                        Navigator.pushNamed(context, '/termspage');
                       },
                       label: Text(
                         '회원가입하러 가기',

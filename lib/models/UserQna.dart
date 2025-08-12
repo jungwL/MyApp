@@ -6,7 +6,7 @@ class UserQna {
   final String name;
   final String phone;
   final String email;
-  final DateTime createdAt;
+  final DateTime addTime;
 
   UserQna({
     required this.consultType,
@@ -16,22 +16,25 @@ class UserQna {
     required this.name,
     required this.phone,
     required this.email,
-    required this.createdAt,
+    required this.addTime,
   });
 
   // JSON에서 객체로 변환
   factory UserQna.fromJson(Map<String, dynamic> json) {
     return UserQna(
-      consultType: json['consultType'],
-      contentType: json['contentType'],
-      title: json['title'],
-      content: json['content'],
-      name: json['name'],
-      phone: json['phone'],
-      email: json['email'],
-      createdAt: DateTime.parse(json['createdAt']),
+      consultType: json['consultType'] ?? '',
+      contentType: json['contentType'] ?? '',
+      title: json['title'] ?? '',
+      content: json['content'] ?? '',
+      name: json['name'] ?? '',
+      phone: json['phone'] ?? '',
+      email: json['email'] ?? '',
+      addTime: json['addTime'] != null
+          ? DateTime.parse(json['addTime'])
+          : DateTime.now(),  // null일 경우 현재 시간으로 기본 설정
     );
   }
+
 
   // 객체를 JSON으로 변환 (요청 시 사용 가능)
   Map<String, dynamic> toJson() {
@@ -43,7 +46,7 @@ class UserQna {
       'name': name,
       'phone': phone,
       'email': email,
-      'createdAt': createdAt.toIso8601String(),
+      'addTime': addTime.toIso8601String(),
     };
   }
 }
