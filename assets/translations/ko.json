@@ -1,0 +1,28 @@
+{
+  "normal_setting": "일반 설정",
+  "app_setting": "앱 설정",
+  "setting": "설정",
+  "language_setting": "언어 설정",
+  "language_selection": "언어 선택",
+  "dark_mode": "다크 모드",
+  "dark_mode_subtitle": "화면을 어둡게 합니다.",
+  "notifications": "알림 받기",
+  "notifications_subtitle": "새 소식과 업데이트를 받습니다",
+  "app_version": "앱 버전",
+  "customer_service": "고객센터",
+  "privacy_policy": "개인정보처리방침",
+  "privacy_policy_example": "개인정보처리방침 내용 예시....",
+  "close":"닫기",
+  "logout": "로그아웃",
+
+  "customer_center": "고객센터",
+  "1:1_inquiry": "1:1 문의",
+  "1:1_inquiry_sub": "빠른 답변 드리겠습니다.",
+  "1:1_inquiry_go": "1:1 문의 하기",
+  "inquiry_List_Login": "문의 내역을 보시려면 로그인 해주세요.",
+  "inquiry_No_List": "문의 내역이 없습니다.",
+  "customer_compliments": "고객칭찬",
+  "customer_compliments_sub": "서울바게트 칭찬점포를 소개합니다.",
+  "faq": "자주하는 질문",
+  "faq_sub": "아래 질문 내용을 확인 해주세요."
+}

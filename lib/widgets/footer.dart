@@ -116,6 +116,19 @@ class ImageFooter extends StatelessWidget {
       width: 200,
       height: 100,
     );
+    /*Image.network(
+      'https://example.com/images/logo.png',
+      width: 200,
+      height: 100,
+      fit: BoxFit.contain, // 비율 유지하며 맞추기
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child; // 로딩 완료
+        return const CircularProgressIndicator(); // 로딩 중
+      },
+      errorBuilder: (context, error, stackTrace) {
+        return const Icon(Icons.error); // 실패 시 대체 UI
+      },
+    );*/
   }
 }
 

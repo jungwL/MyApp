@@ -91,10 +91,10 @@ class _CustomdrawerState extends State<Customdrawer> {
                   onPressed: () {
                     Navigator.pushNamed(context, '/login');
                   },
-                  child: const Text(
+                  child: Text(
                     '로그인하러 가기',
                     style: TextStyle(
-                      color: Colors.brown,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -104,10 +104,10 @@ class _CustomdrawerState extends State<Customdrawer> {
                   onPressed: () {
                     Navigator.pushNamed(context, '/termspage');
                   },
-                  child: const Text(
+                  child: Text(
                     '회원가입하러 가기',
                     style: TextStyle(
-                      color: Colors.brown,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

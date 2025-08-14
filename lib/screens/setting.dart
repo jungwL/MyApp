@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:studyex04/models/user_session.dart';
 import '../main.dart'; // MyApp 상태 접근
 import 'cs_page.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class Setting extends StatefulWidget {
   const Setting({super.key});
@@ -13,13 +14,33 @@ class Setting extends StatefulWidget {
 class _SettingState extends State<Setting> {
   bool isDark = false;
   bool notificationsEnabled = true;
+
+  late Locale currentLocale;
   String language = '한국어';
 
-  final List<String> languagesList = ['한국어', 'English', '日本語', '中文'];
+  final List<String> languagesList = ['한국어', 'English'];
+
+  List<Locale> supportedLocales = [
+    const Locale('en'),
+    const Locale('ko'),
+  ];
+
+  String getLanguageName(Locale locale) {
+    switch (locale.languageCode) {
+      case 'en':
+        return 'English';
+      case 'ko':
+        return '한국어';
+      default:
+        return '?';
+    }
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    currentLocale = context.locale;
+    language = getLanguageName(currentLocale);
     isDark = MyApp.of(context)?.isDarkMode ?? false;
   }
 
@@ -28,7 +49,7 @@ class _SettingState extends State<Setting> {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('설정',style: TextStyle(fontWeight: FontWeight.bold),),
+        title: const Text('setting', style: TextStyle(fontWeight: FontWeight.bold)).tr(),
         centerTitle: true,
         elevation: 0,
         backgroundColor: theme.scaffoldBackgroundColor,
@@ -37,42 +58,32 @@ class _SettingState extends State<Setting> {
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
         children: [
-          _buildSectionTitle('일반 설정'),
+          _buildSectionTitle('normal_setting'),
           const SizedBox(height: 12),
 
           // 다크모드 토글
           Card(
-            margin: const EdgeInsets.only(bottom: 12), // 카드 아래쪽 12픽셀 마진
+            margin: const EdgeInsets.only(bottom: 12),
             shape: RoundedRectangleBorder(
-              //카드 모서리16픽셀 둥글게
               borderRadius: BorderRadius.circular(16),
             ),
-            elevation: 2, //카드 입체감을 주는 그림자 깊이 설정(2는 가벼운 그림자)
+            elevation: 2,
             child: SwitchListTile(
-              //카드 내부에 스위치가 포함된 리스트 스타일
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 24, //가로 24픽셀
-                vertical: 4, //세로 4픽셀 타일 안쪽 여백
-              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
               title: Text(
-                //타일의 제목 텍스트 다크 모드 굵게 설정
-                '다크 모드',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              subtitle: const Text('화면을 어둡게 합니다'), //타일의 부제목 텍스트
-              value: isDark, //스위치 상태를 isDartk 변구 값에 따라 결정(on/off)
-              activeColor: Colors.brown, //스위치가 on일 때 표시할 색상 지정
+                'dark_mode',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ).tr(),
+              subtitle: Text('dark_mode_subtitle').tr(),
+              value: isDark,
+              activeColor: Colors.brown,
               onChanged: (value) {
-                //스위치가 변경되면 isDark 상태를 업데이트 하고 앱테마를 변경하는 메서드 호출
                 setState(() {
                   isDark = value;
                 });
-                MyApp.of(context)?.toggleTheme(value);
+                MyApp.of(context)?.toggleTheme(value); //main 다크모드 메서드 호출
               },
               shape: RoundedRectangleBorder(
-                //모서리를 둥글게 만들어 카드와 통일된 스타일 적용
                 borderRadius: BorderRadius.circular(16),
               ),
             ),
@@ -86,17 +97,12 @@ class _SettingState extends State<Setting> {
             ),
             elevation: 2,
             child: SwitchListTile(
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 4,
-              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
               title: Text(
-                '알림 받기',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              subtitle: const Text('새 소식과 업데이트를 받습니다'),
+                'notifications',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ).tr(),
+              subtitle: Text('notifications_subtitle').tr(),
               value: notificationsEnabled,
               activeColor: Colors.brown,
               onChanged: (value) {
@@ -111,149 +117,100 @@ class _SettingState extends State<Setting> {
           ),
 
           const SizedBox(height: 24),
-          _buildSectionTitle('앱 설정'),
+          _buildSectionTitle('app_setting'),
           const SizedBox(height: 12),
 
-          // 언어 선택
+          // 언어 선택 카드
           Card(
             margin: const EdgeInsets.only(bottom: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             elevation: 2,
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               title: Text(
-                '언어 설정',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+                'language_setting',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ).tr(),
               subtitle: Text(
                 language,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: Colors.brown,
-                ),
+                style: theme.textTheme.bodyMedium?.copyWith(color: Colors.brown),
               ),
-              trailing: Icon(
-                Icons.keyboard_arrow_right,
-                color: Colors.brown,
-              ),
+              trailing: Icon(Icons.keyboard_arrow_right, color: Colors.brown),
               onTap: _showLanguageDialog,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),
           ),
 
-          // 앱 버전
+          // 앱 버전 카드
           Card(
             margin: const EdgeInsets.only(bottom: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             elevation: 2,
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               title: Text(
-                '앱 버전',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+                'app_version',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ).tr(),
               subtitle: const Text('1.0.0'),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),
           ),
 
+          // 고객센터 카드
           Card(
-            margin: const EdgeInsets.only(
-              bottom: 12,
-            ), // 카드 아래쪽에 12픽셀 여백을 둠 (아래 카드와 간격 확보)
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-                16,
-              ), // 카드 모서리를 둥글게 16픽셀 반경으로 만듦
-            ),
-            elevation: 2, // 그림자 깊이 설정, 카드가 떠있는 느낌을 줌
+            margin: const EdgeInsets.only(bottom: 12),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            elevation: 2,
             child: ListTile(
-              // 리스트 항목 스타일의 위젯 사용
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 24,
-              ), // 좌우 내부 여백 24픽셀 지정
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               title: Text(
-                // 카드 제목 텍스트
-                '고객센터',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600, // 폰트 두껍게 지정
-                ),
-              ),
-              trailing: Icon(
-                // 오른쪽 끝에 아이콘 추가
-                Icons.phone_forwarded, // 전화 아이콘
-                color: Colors.brown, // 테마의 주 색상 적용
-              ),
+                'customer_service',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ).tr(),
+              trailing: Icon(Icons.phone_forwarded, color: Colors.brown),
               onTap: () {
-                // 카드 눌렀을 때 실행되는 함수
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => CsPage())
-                );
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CsPage()));
               },
             ),
           ),
 
-          // 개인정보처리방침
+          // 개인정보처리방침 카드
           Card(
             margin: const EdgeInsets.only(bottom: 24),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             elevation: 2,
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               title: Text(
-                '개인정보처리방침',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              trailing: Icon(
-                Icons.open_in_new,
-                color: Colors.brown,
-              ),
+                'privacy_policy',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ).tr(),
+              trailing: Icon(Icons.open_in_new, color: Colors.brown),
               onTap: () {
                 showDialog(
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      title: const Text('개인정보처리방침'),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      title: const Text('privacy_policy').tr(),
                       content: SingleChildScrollView(
                         child: Text(
-                          '개인정보처리방침 내용 예시.\n\n'
-                              '예: 개인정보 수집, 이용 목적, 보관 기간, 제3자 제공 등에 관한 내용 등...\n\n'
-                              '제1항 : 서비스 기획부터 종료까지 개인정보보호법 등 국내의 개인정보 보호 법령을 철저히 준수합니다. 또한 OECD의 개인정보 보호 가이드라인 등 국제 기준을 준수하여 서비스를 제공합니다. 제1항 : 서비스 기획부터 종료까지 개인정보보호법 등 국내의 개인정보 보호 법령을 철저히 준수합니다. 또한 OECD의 개인정보 보호 가이드라인 등 국제 기준을 준수하여 서비스를 제공합니다.제1항 : 서비스 기획부터 종료까지 개인정보보호법 등 국내의 개인정보 보호 법령을 철저히 준수합니다. 또한 OECD의 개인정보 보호 가이드라인 등 국제 기준을 준수하여 서비스를 제공합니다.제1항 : 서비스 기획부터 종료까지 개인정보보호법 등 국내의 개인정보 보호 법령을 철저히 준수합니다. 또한 OECD의 개인정보 보호 가이드라인 등 국제 기준을 준수하여 서비스를 제공합니다.제1항 : 서비스 기획부터 종료까지 개인정보보호법 등 국내의 개인정보 보호 법령을 철저히 준수합니다. 또한 OECD의 개인정보 보호 가이드라인 등 국제 기준을 준수하여 서비스를 제공합니다.제1항 : 서비스 기획부터 종료까지 개인정보보호법 등 국내의 개인정보 보호 법령을 철저히 준수합니다. 또한 OECD의 개인정보 보호 가이드라인 등 국제 기준을 준수하여 서비스를 제공합니다.제1항 : 서비스 기획부터 종료까지 개인정보보호법 등 국내의 개인정보 보호 법령을 철저히 준수합니다. 또한 OECD의 개인정보 보호 가이드라인 등 국제 기준을 준수하여 서비스를 제공합니다.제1항 : 서비스 기획부터 종료까지 개인정보보호법 등 국내의 개인정보 보호 법령을 철저히 준수합니다. 또한 OECD의 개인정보 보호 가이드라인 등 국제 기준을 준수하여 서비스를 제공합니다.',
+                          'privacy_policy_example',
                           style: theme.textTheme.bodyMedium,
-                        ),
+                        ).tr(),
                       ),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('닫기'),
+                          child: const Text('close').tr(),
                         ),
                       ],
                     );
                   },
                 );
               },
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),
           ),
 
@@ -261,31 +218,22 @@ class _SettingState extends State<Setting> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              icon: const Icon(Icons.logout_rounded,color: Colors.white,),
+              icon: const Icon(Icons.logout_rounded, color: Colors.white),
               label: const Text(
-                '로그아웃',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white
-                ),
-              ),
+                'logout',
+                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+              ).tr(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.brown,
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 elevation: 4,
               ),
               onPressed: () {
-                //로그아웃구현
-                if(UserSession.isLoggedIn){
+                if (UserSession.isLoggedIn) {
                   UserSession.logout();
-                }else {
-                  Navigator.pushNamed(
-                    context,
-                    '/login',
-                  ); // 로그인 화면으로 이동
+                } else {
+                  Navigator.pushNamed(context, '/login');
                 }
               },
             ),
@@ -300,12 +248,8 @@ class _SettingState extends State<Setting> {
       padding: const EdgeInsets.only(bottom: 4),
       child: Text(
         title,
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Colors.brown,
-        ),
-      ),
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyMedium?.color),
+      ).tr(),
     );
   }
 
@@ -314,10 +258,8 @@ class _SettingState extends State<Setting> {
       context: context,
       builder: (context) {
         return SimpleDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: const Text('언어 선택'),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text('language_selection').tr(),
           children: languagesList.map((lang) {
             return RadioListTile<String>(
               title: Text(lang),
@@ -325,9 +267,12 @@ class _SettingState extends State<Setting> {
               groupValue: language,
               activeColor: Colors.brown,
               onChanged: (value) {
+                if (value == null) return;
                 setState(() {
-                  language = value!;
+                  language = value;
+                  currentLocale = value == 'English' ? const Locale('en') : const Locale('ko');
                 });
+                context.setLocale(currentLocale);
                 Navigator.pop(context);
               },
             );
