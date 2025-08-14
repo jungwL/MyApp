@@ -46,7 +46,7 @@ class _TodayBreadListState extends State<TodayBreadList> with SingleTickerProvid
                 Row(
                   children: [
                     BackButton(
-                      color: Colors.brown,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -56,7 +56,7 @@ class _TodayBreadListState extends State<TodayBreadList> with SingleTickerProvid
                         child: Text(
                           '오늘의 빵',
                           style: TextStyle(
-                            color: Colors.brown,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
                             fontWeight: FontWeight.bold,
                             fontSize: 22,
                             fontFamily: 'PlaywriteAUNSW',
@@ -77,7 +77,7 @@ class _TodayBreadListState extends State<TodayBreadList> with SingleTickerProvid
                   labelColor: Colors.brown,
                   indicatorColor: Colors.brown,
                   tabs:const [
-                    Tab(text: '케익',),
+                    Tab(text: '케이크',),
                     Tab(text: '바게트',),
                     Tab(text: '빵',),
                     Tab(text: '샌드위치',),

@@ -10,3 +10,8 @@ final List<String> imagePaths = [
   'assets/images/slide2.png',
   'assets/images/slide3.png',
 ];
+
+final List<String> imagePathsDark = [
+  'assets/images/slide2_dark.png',
+  'assets/images/slide3_dark.png',
+];

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/customDrawer.dart';
 import '../widgets/customAppBar.dart';
+import '../widgets/customBottomNai.dart';
 
 class OnlineorderPage extends StatefulWidget {
   const OnlineorderPage({super.key});
@@ -25,7 +26,7 @@ class _OnlineorderPageState extends State<OnlineorderPage> {
                 Row(
                   children: [
                     BackButton(
-                      color: Colors.brown,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -35,7 +36,7 @@ class _OnlineorderPageState extends State<OnlineorderPage> {
                           child: Text(
                             '온라인 주문',
                             style: TextStyle(
-                              color: Colors.brown,
+                              color: Theme.of(context).textTheme.bodyMedium?.color,
                               fontWeight: FontWeight.bold,
                               fontSize: 22,
                             ),
@@ -59,7 +60,7 @@ class _OnlineorderPageState extends State<OnlineorderPage> {
                     child: Text(
                         '오픈 준비중입니다..',
                       style: TextStyle(
-                        color: Colors.brown,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
                         fontSize: 22,
                         fontWeight: FontWeight.bold
                       ),
@@ -71,6 +72,7 @@ class _OnlineorderPageState extends State<OnlineorderPage> {
           ),
         ],
       ),
+      bottomNavigationBar: Custombottomnai(),
     );
   }
 }

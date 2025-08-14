@@ -51,12 +51,13 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
   Future<void> _joinUser() async {
     // 요청을 보낼 백엔드 API 주소 (Spring Boot 서버)
     final String url = 'http://localhost:8080/api/joinUser';
+    //final String url = 'http://192.168.30.133:8080/api/joinUser';
 
     try {
       // HTTP POST 요청을 보냄 (사용자 입력 값을 JSON으로 변환해서 전송)
       final response = await http.post(
         Uri.parse(url), // 문자열 URL을 Uri 객체로 변환
-        headers: {'Content-Type': 'application/json'}, // 요청 헤더에 JSON 형식임을 명시
+        headers: {'Content-Type': 'application/json'}, // 요청 헤더에 JSON 형식
         body: json.encode({
           'userName': _nameController.text,        // 사용자 이름
           'userId': _emailController.text,         // 사용자 이메일(ID)
@@ -64,7 +65,7 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
           'phoneNumber': _phoneController.text,    // 사용자 전화번호
         }),
       );
-      print('HTTP 요청 코드 :  ${response.statusCode}');
+      print('회원가입 HTTP 요청 코드 :  ${response.statusCode}');
       // 서버가 200 OK 응답을 보낸 경우 → 회원가입 성공
       if (response.statusCode == 200) {
         // 응답받은 JSON 데이터를 User 객체로 변환

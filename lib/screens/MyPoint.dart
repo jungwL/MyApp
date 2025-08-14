@@ -60,7 +60,7 @@ class _MyPointPageState extends State<MyPointPage> with SingleTickerProviderStat
                 Row(
                   children: [
                     BackButton(
-                      color: Colors.brown,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -70,7 +70,7 @@ class _MyPointPageState extends State<MyPointPage> with SingleTickerProviderStat
                         child: Text(
                           '나의 멤버십',
                           style: TextStyle(
-                            color: Colors.brown,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
                             fontWeight: FontWeight.bold,
                             fontSize: 22,
                             fontFamily: 'PlaywriteAUNSW',

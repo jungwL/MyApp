@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:studyex04/models/UserQna.dart';
@@ -7,7 +8,7 @@ import 'login.dart';
 import '../widgets/customDrawer.dart';
 import '../widgets/customAppBar.dart';
 import '../widgets/customBottomNai.dart';
-import '../models/user_session.dart';
+import '../core/CsPageList.dart';
 
 class CsPage extends StatefulWidget {
   const CsPage({super.key});
@@ -42,7 +43,7 @@ class _CsPageState extends State<CsPage> with SingleTickerProviderStateMixin {
           Row(
             children: [
               BackButton(
-                color: Colors.brown,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -50,13 +51,13 @@ class _CsPageState extends State<CsPage> with SingleTickerProviderStateMixin {
               Expanded(
                 child: Center(
                   child: Text(
-                    '고객센터',
+                    'customer_center',
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Colors.brown,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
                     ),
-                  ),
+                  ).tr(),
                 ),
               ),
               const SizedBox(width: 48),
@@ -68,10 +69,10 @@ class _CsPageState extends State<CsPage> with SingleTickerProviderStateMixin {
             controller: _tabController,
             labelColor: Colors.brown,
             indicatorColor: Colors.brown,
-            tabs: const [
-              Tab(text: '1:1 문의'),
-              Tab(text: '고객칭찬'),
-              Tab(text: '자주하는 질문'),
+            tabs: [
+              Tab(text: '1:1_inquiry'.tr()),
+              Tab(text: 'customer_compliments'.tr()),
+              Tab(text: 'faq'.tr()),
             ],
           ),
           const Divider(height: 1),
@@ -122,6 +123,7 @@ class _InquiryTabState extends State<InquiryTab> {
   //전화번호 기반 1:1문의 리스트 비동기 호출
   Future<void> fetchInquiryList(String phone) async {
     final url = Uri.parse('http://localhost:8080/api/qna/list?phone=$phone');
+    //final String url = 'http://192.168.30.133:8080/api/qna/list?phone=$phone';
     try {
       final response = await http.get(url);
 
@@ -148,7 +150,8 @@ class _InquiryTabState extends State<InquiryTab> {
     if (_formKey.currentState!.validate()) {
       try {
         final response = await http.post(
-          Uri.parse("http://localhost:8080/api/qna"),
+          Uri.parse('http://localhost:8080/api/qna'),
+          //Uri.parse('http://192.168.30.133:8080/api/qna'),
           headers: {"Content-Type": "application/json"},
           body: json.encode({
             'consultType': selectedConsultType,
@@ -422,15 +425,15 @@ class _InquiryTabState extends State<InquiryTab> {
       children: [
         const SizedBox(height: 50),
         const Text(
-          '1:1 문의',
+          '1:1_inquiry',
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
+        ).tr(),
         const SizedBox(height: 20),
         const Text(
-          '신속히 답변 드리겠습니다.',
+          '1:1_inquiry_sub',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14, color: Colors.grey),
-        ),
+        ).tr(),
         const SizedBox(height: 30),
         const Divider(thickness: 1),
         const SizedBox(height: 20),
@@ -444,15 +447,15 @@ class _InquiryTabState extends State<InquiryTab> {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
           child: const Text(
-            '1:1 문의 하기',
+            '1:1_inquiry_go',
             style: TextStyle(fontSize: 16, color: Colors.white),
-          ),
+          ).tr(),
         ),
         const SizedBox(height: 20),
         Expanded(
           child: UserSession.isLoggedIn
               ? (inquiryList.isEmpty
-                    ? const Center(child: Text('문의 내역이 없습니다.')) // 문의 내역이 없을 경우
+                    ? Center(child: Text('inquiry_No_List').tr()) // 문의 내역이 없을 경우
                     : ListView.builder(
                         // 로그인 상태일 경우 && inquiryList에 값이 들어있을 경우 해당 고객의 문의 내역 정보를 가져온다.
                         itemCount: inquiryList.length,
@@ -483,7 +486,7 @@ class _InquiryTabState extends State<InquiryTab> {
                         },
                       )
                     )
-              : const Center(child: Text('문의 내역을 보시려면 로그인 해주세요.')), //비로그인시
+              : Center(child: Text('inquiry_List_Login').tr()), //비로그인시
         ),
       ],
     );
@@ -492,28 +495,6 @@ class _InquiryTabState extends State<InquiryTab> {
 
 //고객칭찬 탭
 class PraiseTab extends StatelessWidget {
-  final List<Map<String, String>> praiseStores = const [
-    {
-      'store': '광화문점',
-      'location': '서울특별시 종로구 세종대로 23',
-      'praise': '직원분들이 매우 친절하고 빵도 항상 신선합니다!',
-    },
-    {
-      'store': '강남점',
-      'location': '서울특별시 강남구 강남대로 456',
-      'praise': '빠르고 정확한 서비스에 감동했습니다.',
-    },
-    {
-      'store': '홍대점',
-      'location': '서울특별시 마포구 홍익로 123',
-      'praise': '매장 분위기가 너무 좋고 빵 종류도 다양했어요.',
-    },
-    {
-      'store': '성수점',
-      'location': '서울특별시 성동구 성수동 123',
-      'praise': '직원분이 매우 친철합니다..',
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -524,15 +505,15 @@ class PraiseTab extends StatelessWidget {
         children: [
           const SizedBox(height: 50),
           const Text(
-            '고객칭찬',
+            'customer_compliments',
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
+          ).tr(),
           const SizedBox(height: 20),
           const Text(
-            '서울바게트 칭찬점포를 소개합니다.',
+            'customer_compliments_sub',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 14, color: Colors.grey),
-          ),
+          ).tr(),
           const SizedBox(height: 30),
           const Divider(thickness: 1),
 
@@ -604,46 +585,21 @@ class PraiseTab extends StatelessWidget {
 
 // 자주하는 질문 탭 (FAQ 아코디언 리스트 추가)
 class FAQTab extends StatelessWidget {
-  final List<Map<String, String>> faqList = [
-    {
-      'question': '한 제품 구매 시 여러 개의 교환권을 한번에 사용할 수 있나요?',
-      'answer': '모바일금액권은 액면가액과 동일하거나 그 이상만 결제할 수 있습니다. 교환권은 최대 6개까지 사용 가능합니다.',
-    },
-    {
-      'question': '사업설명회를 참석하려면 어떻게 해야 하나요?',
-      'answer': '담당자와 상담을 통해 자세히 안내받으실 수 있습니다.',
-    },
-    {
-      'question': '할인 받을 수 있는 카드는 무엇이 있나요?',
-      'answer': '담당자와 상담을 통해 자세히 안내받으실 수 있습니다.',
-    },
-    {
-      'question': '매장 정보는 어떻게 알수 있나요?',
-      'answer': '담당자와 상담을 통해 자세히 안내받으실 수 있습니다.',
-    },
-    {'question': '비닐 봉투는 유상 제공인가요?', 'answer': '담당자와 상담을 통해 자세히 안내받으실 수 있습니다.'},
-    {'question': '멤버십 적립은 어떻게 하나요?', 'answer': '담당자와 상담을 통해 자세히 안내받으실 수 있습니다.'},
-    {
-      'question': '마진율 및 수익구조는 어떻게 되나요?',
-      'answer': '담당자와 상담을 통해 자세히 안내받으실 수 있습니다.',
-    },
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         SizedBox(height: 50),
         Text(
-          '자주하는 질문',
+          'faq',
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
+        ).tr(),
         SizedBox(height: 20),
         Text(
-          '아래 질문 내용을 확인 해주세요.',
+          'faq_sub',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14, color: Colors.grey),
-        ),
+        ).tr(),
         SizedBox(height: 30),
         Divider(thickness: 1),
         Expanded(
@@ -652,7 +608,7 @@ class FAQTab extends StatelessWidget {
             itemBuilder: (context, index) {
               return ExpansionTile(
                 title: Text(
-                  faqList[index]['question']!,
+                  faqList[index]['question']!, //질문 정보
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -664,7 +620,7 @@ class FAQTab extends StatelessWidget {
                     color: Colors.brown[100],
                     padding: const EdgeInsets.all(12),
                     child: Text(
-                      faqList[index]['answer']!,
+                      faqList[index]['answer']!, //답변정보
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.black87,

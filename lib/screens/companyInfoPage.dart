@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../widgets/customAppBar.dart';
-import '../widgets/customBottomNai.dart';
 import '../widgets/customDrawer.dart';
-import '../widgets/footer.dart';
 
 class CompanyMapPage extends StatefulWidget {
   const CompanyMapPage({super.key});
@@ -42,7 +40,7 @@ class CompanyMapPageState extends State<CompanyMapPage> with SingleTickerProvide
                 Row(
                   children: [
                     BackButton(
-                      color: Colors.brown,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -52,7 +50,7 @@ class CompanyMapPageState extends State<CompanyMapPage> with SingleTickerProvide
                         child: Text(
                           '매장정보',
                           style: TextStyle(
-                            color: Colors.brown,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
                             fontWeight: FontWeight.bold,
                             fontSize: 22,
                             fontFamily: 'PlaywriteAUNSW',

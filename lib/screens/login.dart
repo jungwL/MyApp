@@ -54,6 +54,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   //로그인 API 호출
   Future<void> _login() async {
     final String url = 'http://localhost:8080/api/login';
+    //final String url = 'http://192.168.30.133:8080/api/login';
     try {
       final response = await http.post( // post방식 응답 요청
         Uri.parse(url), //서버와 연동
@@ -63,7 +64,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
           'password': _passwordController.text,
         }),
       );
-      print('http 응답코드 : ${response.statusCode}');
+      print('로그인 http 응답코드 : ${response.statusCode}');
       //응답코드가 200일경우
       if (response.statusCode == 200) {
         final user = User.fromJson(json.decode(response.body)); //회원DB를 통해 받은 데이터 값 저장
@@ -140,7 +141,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                       ),
                       labelText: '이메일',
                       labelStyle: TextStyle(
-                        color: Colors.brown
+                        color: Theme.of(context).textTheme.bodyMedium?.color
                       ),
                       prefixIcon: const Icon(Icons.email_outlined),
                       filled: true,
@@ -174,7 +175,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                     decoration: InputDecoration(
                       labelText: '비밀번호',
                       labelStyle: TextStyle(
-                        color: Colors.brown,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
                       ),
                       prefixIcon: const Icon(Icons.lock_outline),
                       filled: true,
@@ -232,7 +233,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                         '회원가입하러 가기',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.brown,
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
                           fontSize: 16,
                         ),
                       ),

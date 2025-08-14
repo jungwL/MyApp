@@ -1,0 +1,33 @@
+{
+  "normal_setting": "Normal Setting",
+  "app_setting": "App Setting",
+  "setting": "Setting",
+  "language_setting": "Language Setting",
+  "language_selection": "Language Selection",
+  "dark_mode": "Dark Mode",
+  "dark_mode_subtitle": "Darken the screen",
+  "notifications": "Notifications",
+  "notifications_subtitle": "Receive News and updates",
+  "app_version": "App Version",
+  "customer_service": "Customer Service",
+  "privacy_policy": "Privacy Policy",
+  "privacy_policy_example": "Privacy Policy example.....................",
+  "close":"Close",
+  "logout": "Logout",
+
+  "customer_center": "Customer Center",
+  "1:1_inquiry": "1:1 Inquiry",
+  "1:1_inquiry_sub": "I'll give you a quick answer.",
+  "1:1_inquiry_go": "1:1 Inquiry Form",
+  "inquiry_List_Login": "Please log in to see the details of your inquiry.",
+  "inquiry_No_List": "There is no history of inquiry.",
+  "customer_compliments": "Compliments",
+  "customer_compliments_sub": "Let me introduce the Seoul Baguette Praise Store.",
+  "faq": "FAQ",
+  "faq_sub": "Please check the questions below."
+
+
+
+}
+
+
