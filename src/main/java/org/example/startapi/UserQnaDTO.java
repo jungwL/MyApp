@@ -1,4 +1,6 @@
-package org.example.startapi.config;
+package org.example.startapi;
+
+import java.util.Date;
 
 // com.example.dto.UserQnaDTO.java
 public class UserQnaDTO {
@@ -10,9 +12,23 @@ public class UserQnaDTO {
     private String name;             // 작성자 이름
     private String phone;            // 전화번호
     private String email;            // 이메일
+    private String addTime;          // 입력 날짜정보
 
-    // 생성자, getter, setter
-    public UserQnaDTO() {}
+    // 생성자
+    public UserQnaDTO(String consultType, String contentType, String title,
+                      String content, String name, String phone, String email, String addTime) {
+        this.consultType = consultType;
+        this.contentType = contentType;
+        this.title = title;
+        this.content = content;
+        this.name = name;
+        this.phone = phone;
+        this.email = email;
+        this.addTime = addTime;
+    }
+
+
+    //getter, setter
 
     public String getConsultType() {
         return consultType;
@@ -68,5 +84,13 @@ public class UserQnaDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getAddTime() {
+        return addTime;
+    }
+
+    public void setAddTime(String addTime) {
+        this.addTime = addTime;
     }
 }
