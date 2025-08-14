@@ -123,7 +123,6 @@ class _InquiryTabState extends State<InquiryTab> {
   //전화번호 기반 1:1문의 리스트 비동기 호출
   Future<void> fetchInquiryList(String phone) async {
     final url = Uri.parse('http://localhost:8080/api/qna/list?phone=$phone');
-    //final String url = 'http://192.168.30.133:8080/api/qna/list?phone=$phone';
     try {
       final response = await http.get(url);
 
@@ -151,7 +150,6 @@ class _InquiryTabState extends State<InquiryTab> {
       try {
         final response = await http.post(
           Uri.parse('http://localhost:8080/api/qna'),
-          //Uri.parse('http://192.168.30.133:8080/api/qna'),
           headers: {"Content-Type": "application/json"},
           body: json.encode({
             'consultType': selectedConsultType,

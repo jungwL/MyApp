@@ -51,7 +51,6 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
   Future<void> _joinUser() async {
     // 요청을 보낼 백엔드 API 주소 (Spring Boot 서버)
     final String url = 'http://localhost:8080/api/joinUser';
-    //final String url = 'http://192.168.30.133:8080/api/joinUser';
 
     try {
       // HTTP POST 요청을 보냄 (사용자 입력 값을 JSON으로 변환해서 전송)

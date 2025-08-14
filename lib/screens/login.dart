@@ -54,7 +54,6 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   //로그인 API 호출
   Future<void> _login() async {
     final String url = 'http://localhost:8080/api/login';
-    //final String url = 'http://192.168.30.133:8080/api/login';
     try {
       final response = await http.post( // post방식 응답 요청
         Uri.parse(url), //서버와 연동
