@@ -1,10 +1,14 @@
 package org.example.startapi;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -117,6 +121,26 @@ public class UserController {
         }else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("리소스를 찾을 수 없습니다."); //404
         }
+    }
+    //----------------------------------------------------------------------------------------------
+    //1대1문의 내역 삭제하기
+    @DeleteMapping("qna/delete")
+    public ResponseEntity<?> deleteQnaByTime(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime addtime,
+            @RequestParam String phone) {
+        System.out.println("요청 addtime : " + addtime);
+        System.out.println("요청 phone : " + phone);
+
+        boolean userQnaDTO = userService.deleteQna(addtime, phone);
+
+        if (userQnaDTO) {
+            System.out.println("삭제되었습니다. ");
+            return ResponseEntity.ok(userQnaDTO);
+        }else {
+            System.out.println("삭제가 불가합니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("삭제불가");
+        }
+
     }
 
     //------------------------------------------------------------------------------------------------

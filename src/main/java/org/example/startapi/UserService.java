@@ -1,7 +1,11 @@
 package org.example.startapi;
 
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +36,9 @@ public class UserService {
     }
     //핀번호 로그인 메서드
     public UserDTO pinNoLogin(int userPinNo) {
+        if(userPinNo == 0) { //처음 로그인 시 초기값이 0으로 세팅됨
+            return null;
+        }
         for (UserDTO user : usersList) {
             if (user.getPinNo() == userPinNo) {
                 return user;
@@ -64,6 +71,24 @@ public class UserService {
         return qnaList.stream() // 스크림 생성
                 .filter(qna -> qna.getPhone() != null && qna.getPhone().equals(phone)) //qna가 phone이 null값이 아니고 qnaList에 저장된 phoneNumber값이랑 매개변수 phone 값이랑 같은 경우
                 .collect(Collectors.toList()); // true 값만 리스트에 담는다.
+    }
+    // 날짜값 데이터로 회원의
+    public boolean deleteQna(LocalDateTime addtime , String phone) {
+        System.out.println(addtime + phone);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        for (UserQnaDTO userQnaDTO : qnaList ) {
+            if(userQnaDTO.getPhone().equals(phone)) {
+                System.out.println("1번째 조건문 통과 "+qnaList.indexOf(userQnaDTO));
+                String addtimeStr = addtime.format(formatter);
+                if(userQnaDTO.getAddTime().equals(addtimeStr)) {
+                    System.out.println("2번째 조건문 통과" + qnaList.indexOf(userQnaDTO));
+                    qnaList.remove(userQnaDTO);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     //------------------------------------------------------------------------------
     // 비밀번호 변경 메서드

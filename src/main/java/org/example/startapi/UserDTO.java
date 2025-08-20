@@ -15,7 +15,7 @@ public class UserDTO {
 
     private String phoneNumber; //휴대폰 번호
 
-    private int pinNo;
+    private int pinNo; // 핀번호
 
     public UserDTO() {}
 
