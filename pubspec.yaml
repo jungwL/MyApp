@@ -45,6 +45,7 @@ dependencies:
   google_fonts: ^6.3.0
   auto_size_text: ^3.0.0
   barcode_widget: ^2.0.1
+  flutter_secure_storage: ^9.2.4
 
 
 

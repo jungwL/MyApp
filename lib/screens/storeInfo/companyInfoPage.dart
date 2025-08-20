@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import '../widgets/customAppBar.dart';
-import '../widgets/customDrawer.dart';
+import '../../widgets/customAppBar.dart';
+import '../../widgets/customDrawer.dart';
 
 class CompanyMapPage extends StatefulWidget {
   const CompanyMapPage({super.key});

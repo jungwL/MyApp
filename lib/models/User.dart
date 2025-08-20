@@ -5,13 +5,15 @@ class User {
   final String userName;
   final int userPoint;
   final String phoneNumber;// 연락처 추가됨
+  final int pinNo;
 
   User({
     required this.userId,
     required this.password,
     required this.userName,
     required this.userPoint,
-    required this.phoneNumber
+    required this.phoneNumber,
+    required this.pinNo
   });
 
   //JSON 형식의 데이터를 ==> User 객체로 변환
@@ -21,7 +23,8 @@ class User {
       password: json['password'],
       userName: json['userName'],
       userPoint: json['userPoint'],
-      phoneNumber: json['phoneNumber']
+      phoneNumber: json['phoneNumber'],
+      pinNo: json['pinNo']
     );
   }
 }

@@ -4,7 +4,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:studyex04/models/User.dart';
 import 'package:studyex04/models/user_session.dart';
-import '../homepage.dart';
+import '../../homepage.dart';
+import 'joinSuccess.dart';
 
 class Joinuser extends StatefulWidget {
   const Joinuser({super.key});
@@ -31,6 +32,7 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
   late Animation<double> _fadeIn;
 
   bool _isVerified = false;
+  bool _isEnabled = false;
   String? _authError;
 
   Timer? _timer;
@@ -82,7 +84,7 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
         // 홈 페이지로 이동하면서 현재 화면 제거 (뒤로 못 돌아가게)
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => Joinsuccess(userName: _nameController.text,)), //고객이름 매개변수로 다음 페이지 전달
         );
 
         // 서버 응답이 409 Conflict인 경우 → 이미 가입된 ID
@@ -346,7 +348,7 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
                               controller: _authCodeController,
                               focusNode: _authCodeFocus,
                               keyboardType: TextInputType.number,
-                              enabled: !_isVerified,
+                              enabled: _isEnabled,
                               decoration: InputDecoration(
                                 labelText: '인증번호 입력',
                                 labelStyle: const TextStyle(color: Colors.brown),
@@ -408,6 +410,7 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
                               ? null
                               : () {
                             final code = _authCodeController.text.trim();
+                            _isEnabled  = true;
 
                             // 인증요청 상태일 때는 타이머 시작
                             if (_remainingSeconds == 0) {
@@ -426,10 +429,11 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
                                 });
                                 return;
                               }
-
+                              // 임시인증번호
                               if (code == '1234') {
                                 setState(() {
                                   _isVerified = true;
+                                  _isEnabled = false;
                                   _authError = null;
                                   _timer?.cancel();
                                 });

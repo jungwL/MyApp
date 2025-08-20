@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../models/User.dart';
-import '../models/user_session.dart';
-import 'mypage.dart';
-import '../homepage.dart';
-import 'termspage.dart';
+import '../../models/User.dart';
+import '../../models/user_session.dart';
+import '../mypage/mypage.dart';
+import '../../homepage.dart';
+import 'pin_main.dart';
 
 class LoginPage extends StatefulWidget {
   final String? redirectTo;
@@ -223,21 +223,38 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                     ),
                   ),
                   SizedBox(height: 40,),
-                  Center(
-                    child: TextButton.icon(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/termspage');
-                      },
-                      label: Text(
-                        '회원가입하러 가기',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).textTheme.bodyMedium?.color,
-                          fontSize: 16,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      TextButton.icon(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/termspage');
+                        },
+                        label: Text(
+                          '회원가입하러 가기',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
+                            fontSize: 16,
+                          ),
                         ),
+                        icon: const Icon(Icons.keyboard_arrow_right, color: Colors.brown,),
                       ),
-                      icon: const Icon(Icons.keyboard_arrow_right, color: Colors.brown,),
-                    ),
+                      TextButton.icon(
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => RandomPin()));
+                        },
+                        label: Text(
+                          '간편 로그인하러 가기',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
+                            fontSize: 16,
+                          ),
+                        ),
+                        icon: const Icon(Icons.vpn_key, color: Colors.brown,),
+                      ),
+                    ]
                   )
                 ],
               ),

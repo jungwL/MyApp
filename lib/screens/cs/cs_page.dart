@@ -3,12 +3,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:studyex04/models/UserQna.dart';
-import '../models/user_session.dart';
-import 'login.dart';
-import '../widgets/customDrawer.dart';
-import '../widgets/customAppBar.dart';
-import '../widgets/customBottomNai.dart';
-import '../core/CsPageList.dart';
+import '../../models/user_session.dart';
+import '../login/login.dart';
+import '../../widgets/customDrawer.dart';
+import '../../widgets/customAppBar.dart';
+import '../../widgets/customBottomNai.dart';
+import '../../core/CsPageList.dart';
 
 class CsPage extends StatefulWidget {
   const CsPage({super.key});
@@ -167,7 +167,11 @@ class _InquiryTabState extends State<InquiryTab> {
         if (response.statusCode == 200) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(const SnackBar(content: Text("등록 완료")));
+          ).showSnackBar(const SnackBar(
+              content: Text('1:1문의 등록이 완료되었습니다.'),
+              backgroundColor: Colors.green,
+            )
+          );
           // 초기화
           _titleController.clear();
           _contentController.clear();
@@ -201,6 +205,7 @@ class _InquiryTabState extends State<InquiryTab> {
         return StatefulBuilder(
           builder: (context, setStateDialog) {
             return Dialog(
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -218,7 +223,7 @@ class _InquiryTabState extends State<InquiryTab> {
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
-                            color: Colors.brown[700], // 포인트 컬러
+                            color: Theme.of(context).textTheme.bodyMedium?.color, // 포인트 컬러
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -290,27 +295,43 @@ class _InquiryTabState extends State<InquiryTab> {
                         ),
                         const SizedBox(height: 16),
 
-                        // 이름
+                        // 이름(readOnly)
                         TextFormField(
-                          controller: _nameController,
-                          decoration: _inputDecoration('이름'),
-                          validator: (value) =>
-                              value == null || value.trim().isEmpty
-                              ? '이름을 입력해주세요.'
-                              : null,
+                          controller: TextEditingController(
+                            text : UserSession.currentUser!.userName,
+                          ),
+                          enabled: false,
+                          decoration: InputDecoration(
+                            labelText: '이름',
+                            labelStyle: const TextStyle(color: Colors.grey),
+                            disabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(
+                                color: Colors.grey,
+                                width: 2.0
+                              )
+                            )
+                          ),
+                          readOnly: true,
                         ),
                         const SizedBox(height: 16),
-
                         // 전화번호 (readOnly)
                         TextFormField(
                           controller: TextEditingController(
-                            text: _formatPhoneNumber(
-                              UserSession.currentUser!.phoneNumber,
+                            text: UserSession.currentUser!.phoneNumber,
+                          ),
+                          enabled: false,
+                          decoration: InputDecoration(
+                            labelText: '전화번호',
+                            labelStyle: const TextStyle(color: Colors.grey),
+                            disabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                color: Colors.grey,
+                                width: 2.0,
+                              ),
                             ),
                           ),
-                          readOnly: true,
-                          keyboardType: TextInputType.phone,
-                          decoration: _inputDecoration('전화번호'),
                         ),
                         const SizedBox(height: 16),
 
@@ -346,11 +367,15 @@ class _InquiryTabState extends State<InquiryTab> {
                                 side: BorderSide(color: Colors.brown[300]!),
                               ),
                               onPressed: () => Navigator.of(context).pop(),
-                              child: const Text('취소'),
+                              child: Text('취소',
+                              style: TextStyle(
+                                color: Theme.of(context).textTheme.bodyMedium?.color,
+                                ),
+                              ),
                             ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.brown[400],
+                                backgroundColor: Colors.brown,
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 24,
                                   vertical: 14,
@@ -388,31 +413,26 @@ class _InquiryTabState extends State<InquiryTab> {
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
       labelText: label,
+      labelStyle: TextStyle(
+        color: Theme.of(context).textTheme.bodyMedium?.color,
+      ),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.brown[400]!),
+        borderSide: BorderSide(),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     );
   }
 
-  // 전화번호 포맷 함수
-  String _formatPhoneNumber(String phone) {
-    String digits = phone.replaceAll(RegExp(r'\D'), '');
-    if (digits.length == 11) {
-      return '${digits.substring(0, 3)}-${digits.substring(3, 7)}-${digits.substring(7)}';
-    }
-    return phone;
-  }
-
+  //1대1문의 하기 버튼 선택시
   void _onInquiryButtonPressed() {
-    if (!UserSession.isLoggedIn) {
+    if (!UserSession.isLoggedIn) { //로그인 안ㄷ되어있을경우
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const LoginPage()),
       );
-    } else {
+    } else { //로그인 되어있을경우 폼창 호출
       _showInquiryForm();
     }
   }

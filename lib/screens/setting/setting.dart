@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:studyex04/models/user_session.dart';
-import '../main.dart'; // MyApp 상태 접근
-import 'cs_page.dart';
+import '../../main.dart'; // MyApp 상태 접근
+import '../cs/cs_page.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class Setting extends StatefulWidget {

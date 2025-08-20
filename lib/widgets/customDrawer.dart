@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import '../models/user_session.dart';
-import '../screens/setting.dart';
-import '../screens/mypage.dart';
-import '../screens/companyInfoPage.dart';
-import '../screens/cs_page.dart';
+import '../screens/setting/setting.dart';
+import '../screens/mypage/mypage.dart';
+import '../screens/storeInfo/companyInfoPage.dart';
+import '../screens/cs/cs_page.dart';
 import '../screens/MyPoint.dart';
 import '../screens/todayBreadList.dart';
-import '../screens/login.dart';
+import '../screens/login/login.dart';
 import '../screens/onlineOrder_page.dart';
 import '../screens/onlineOrder_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -56,8 +56,8 @@ class _CustomdrawerState extends State<Customdrawer> {
                   UserSession.currentUser?.userId ?? '이메일',
                 ),
                 currentAccountPicture: CircleAvatar(
-                  backgroundColor: Colors.white,
-                  child: ClipOval(child: Icon(Icons.person_2_outlined),
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  child: ClipOval(child: Icon(Icons.person_2_outlined,),
                 ),),
                 decoration: const BoxDecoration(color: Colors.brown),
               ),

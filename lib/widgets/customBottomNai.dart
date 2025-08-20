@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../homepage.dart';
-import '../screens/companyInfoPage.dart';
+import '../screens/storeInfo/companyInfoPage.dart';
 import 'package:studyex04/screens/MyPoint.dart';
 import '../models/user_session.dart';
-import '../screens/login.dart';
-import '../screens/setting.dart';
+import '../screens/login/login.dart';
+import '../screens/setting/setting.dart';
 import '../screens/onlineOrder_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
