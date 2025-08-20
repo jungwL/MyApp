@@ -11,18 +11,21 @@ public class UserDTO {
 
     private String userName; //이름
 
-    private int userPoint;  //멤버십 포인트 점수
+    private int userPoint;  //멤버십 포인트 점수q
 
     private String phoneNumber; //휴대폰 번호
 
+    private int pinNo;
+
     public UserDTO() {}
 
-    public UserDTO(String userId, String password, String userName, int userPoint, String phoneNumber) {
+    public UserDTO(String userId, String password, String userName, int userPoint, String phoneNumber, int pinNo) {
         this.userId = userId;
         this.password = password;
         this.userName = userName;
         this.userPoint = userPoint;
         this.phoneNumber = phoneNumber;
+        this.pinNo = pinNo;
     }
 
     public String getUserId() {
@@ -64,4 +67,8 @@ public class UserDTO {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
+
+    public int getPinNo() {return pinNo;}
+
+    public void setPinNo(int pinNo) {this.pinNo = pinNo;}
 }

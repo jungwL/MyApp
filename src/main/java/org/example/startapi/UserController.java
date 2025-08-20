@@ -33,6 +33,20 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패"); //401
         }
     }
+    @PostMapping("/login_pinNo")
+    public ResponseEntity<?> loginPinNo(@RequestBody UserDTO pinNoRequest) {
+        System.out.println("------------------Pin 번호 로그인 호출-----------------");
+        System.out.println("flutter 요청 받은 핀 번호 값 : " +  pinNoRequest.getPinNo());
+
+        UserDTO pinNoUser = userService.pinNoLogin(pinNoRequest.getPinNo());
+
+        if (pinNoUser != null) {
+            System.out.println("로그인 성공O: " + pinNoUser.getUserId() + "  사용자 이름 : " + pinNoUser.getUserName());
+            return ResponseEntity.ok(pinNoUser);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
     //------------------------------------------------------------------------------------------------
     //회원가입 API
     @PostMapping("/joinUser")
@@ -105,5 +119,40 @@ public class UserController {
         }
     }
 
+    //------------------------------------------------------------------------------------------------
+    //비밀번호 변경
+    @PostMapping("/changePw")
+    public ResponseEntity<?> changePw(@RequestBody UserChangePasswordDTO changePwRequest) {
+        System.out.println("------------------ 비밀번호 변경 호출 ----------------------");
+        System.out.println("요청 비밀번호: " + changePwRequest.getNewPassword());
+        System.out.println("요청 전화번호: " + changePwRequest.getPhoneNumber());
+        //userService changePassword 메서드 실행
+        boolean result = userService.changePassword(changePwRequest.getNewPassword(), changePwRequest.getPhoneNumber());
 
+        if (result) {
+            System.out.println("비밀번호 변경이 완료됬습니다.");
+            return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+        } else {
+            System.out.println("비밀번호 변경에 실패했습니다.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 비밀번호입니다. 변경 실패"); //409(중복,충돌) 될경우
+        }
+    }
+    //------------------------------------------------------------------------------------------------
+    //마이페이지 - Pin 번호 등록
+    @PostMapping("/register_pinNo")
+    public ResponseEntity<?> registerPinNo(@RequestBody UserDTO pinNoRequest) {
+        System.out.println("------------------Pin 번호 등록 호출------------------");
+        System.out.println("마이페이지 flutter 요청 Pin번호 : " +  pinNoRequest.getPinNo());
+
+        boolean insertPinNo = userService.registerPinNo(pinNoRequest.getPinNo(),pinNoRequest.getPhoneNumber());
+
+        if (insertPinNo) {
+            System.out.println("Pin번호 등록이 완료됬습니다.");
+            return ResponseEntity.ok("Pin번호 등록이 완료됬습니다.");
+        } else {
+            System.out.println("핀번호 등록에 실패했습니다.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 핀번호입니다. 등록 실패"); //409(중복,충돌) 될경우
+        }
+
+    }
 }
