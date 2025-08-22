@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:studyex04/screens/login/login.dart';
 import 'package:easy_localization/easy_localization.dart'; //다국어지원 라이브러리
 import 'homepage.dart'; // 메인 홈 화면
 import 'screens/join/termspage.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
+  await dotenv.load(fileName: ".env"); //앱 초기 실행시 .env 파일 로드
+
 
   runApp(
     EasyLocalization(

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import '../../models/user_session.dart';
 import '../../homepage.dart';
@@ -27,7 +28,7 @@ class _PasswordChangePageState extends State<PasswordChangePage> {
   }
 
   Future<void> _changePassword() async {
-    final String url = 'http://localhost:8080/api/changePw';
+    final String url = dotenv.env['CHANGEPW_API_URL']!;
     try {
       final response = await http.post(
         Uri.parse(url), //윕 주소 형태로 변환

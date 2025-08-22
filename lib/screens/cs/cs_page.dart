@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:studyex04/models/UserQna.dart';
 import '../../models/user_session.dart';
@@ -121,7 +122,7 @@ class _InquiryTabState extends State<InquiryTab> {
 
   //전화번호 기반 1:1문의 리스트 비동기 호출
   Future<void> fetchInquiryList(String phone) async {
-    final url = Uri.parse('http://localhost:8080/api/qna/list?phone=$phone');
+    final url = Uri.parse(dotenv.env['LOGIN_API_URL']!);
     try {
       final response = await http.get(url);
 
@@ -148,7 +149,7 @@ class _InquiryTabState extends State<InquiryTab> {
     if (_formKey.currentState!.validate()) {
       try {
         final response = await http.post(
-          Uri.parse('http://localhost:8080/api/qna'),
+          Uri.parse(dotenv.env['SUBMIT_INQUIRYLIST_API_URL']!),
           headers: {"Content-Type": "application/json"},
           body: json.encode({
             'consultType': selectedConsultType,

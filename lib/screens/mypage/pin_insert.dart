@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import '../../homepage.dart';
 import '../../models/user_session.dart';
@@ -96,7 +97,7 @@ class _RegisterPinPageState extends State<RegisterPinPage> {
 
   // 핀 번호 저장(등록) 로직
   Future<void> _savePinNo() async {
-    final url = 'http://localhost:8080/api/register_pinNo';
+    final url = dotenv.env['REGISTER_PIN_API_URL']!;
 
     try {
       final response = await http.post(

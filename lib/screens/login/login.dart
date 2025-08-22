@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import '../../homepage.dart';
 import '../../models/User.dart';
@@ -54,7 +55,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
 
   //로그인 API 호출
   Future<void> _login() async {
-    final String url = 'http://localhost:8080/api/login';
+    final String url = dotenv.env['LOGIN_API_URL']!;
     try {
       final response = await http.post( // post방식 응답 요청
         Uri.parse(url), //서버와 연동

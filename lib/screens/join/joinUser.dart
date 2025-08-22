@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:studyex04/models/User.dart';
 
@@ -51,7 +52,7 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
 // 회원가입 API를 호출하는 비동기 함수
   Future<void> _joinUser() async {
     // 요청을 보낼 백엔드 API 주소 (Spring Boot 서버)
-    final String url = 'http://localhost:8080/api/joinUser';
+    final String url = dotenv.env['JOIN_API_URL']!;
 
     try {
       // HTTP POST 요청을 보냄 (사용자 입력 값을 JSON으로 변환해서 전송)
