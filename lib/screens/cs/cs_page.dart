@@ -122,7 +122,10 @@ class _InquiryTabState extends State<InquiryTab> {
 
   //전화번호 기반 1:1문의 리스트 비동기 호출
   Future<void> fetchInquiryList(String phone) async {
-    final url = Uri.parse(dotenv.env['LOGIN_API_URL']!);
+    final baseurl = dotenv.env['SELECT_INQUIRYLIST_API_URL']!;
+    print('baseURL : $baseurl');
+    final url = Uri.parse('$baseurl?phone=$phone');
+    print('URL 합본 : $url');
     try {
       final response = await http.get(url);
 
@@ -199,7 +202,8 @@ class _InquiryTabState extends State<InquiryTab> {
   }
   // 문의 내역 삭제하기
   Future<void> _deleteInquiry(DateTime addtime , String phone) async {
-     final url = Uri.parse('http://localhost:8080/api/qna/delete?addtime=${addtime.toIso8601String()}&phone=$phone');
+    final baseurl = dotenv.env['DELETE_INQUIRYLIST_API_URL']!;
+     final url = Uri.parse('$baseurl?addtime=${addtime.toIso8601String()}&phone=$phone');
      print('addtime 값 : ${addtime.toIso8601String()}');
      try {
        final response = await http.delete(url);

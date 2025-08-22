@@ -143,7 +143,6 @@ class _HomePageState extends State<HomePage> {
   Future<void> _fetchWeather() async {
     // 비동기 작업을 수행하고 아무 값도 반환하지 않는다. async키워드 ==> await 사용가능하게
     var apiKey = dotenv.env['OPENWEATHERMAP_KEY']; //발급받은 API키를 지정 (암호화 필수)
-    print('날씨 api 키값 : $apiKey');
     //var apiKey = '';
     final url =
         'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey&units=metric&lang=kr'; //날씨 api요청 URL
