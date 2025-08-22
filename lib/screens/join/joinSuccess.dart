@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:studyex04/homepage.dart';
 import '../login/login.dart';
-import '../MyPoint.dart';
 
 class Joinsuccess extends StatefulWidget {
   Joinsuccess({super.key , required this.userName});

@@ -56,19 +56,22 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false, //디버그 띠 제거
       title: 'Seoul Baguette', //앱 타이틀
-      //테마모드 색상 속성값 적용
+      //기본 모드일 때 색상
       theme: ThemeData.light(useMaterial3: true,).copyWith(
         scaffoldBackgroundColor: Colors.white,
         cardColor: Colors.white70,
-        textTheme: ThemeData.light().textTheme.apply(
-          bodyColor: Colors.brown
+        textTheme: ThemeData.light().textTheme.copyWith(
+          bodyMedium: const TextStyle(color: Colors.brown), // 일반 텍스트
+          bodyLarge: const TextStyle(color: Colors.black),  // 큰 텍스트는 블랙
         ),
       ),
+      //다크 모드일 때 색상
       darkTheme: ThemeData.dark(useMaterial3: true).copyWith(
         scaffoldBackgroundColor: Colors.black,
         cardColor: Colors.grey[800],
-        textTheme: ThemeData.dark().textTheme.apply(
-            bodyColor: Colors.white
+        textTheme: ThemeData.light().textTheme.copyWith(
+          bodyMedium: const TextStyle(color: Colors.brown), // 일반 텍스트
+          bodyLarge: const TextStyle(color: Colors.white),  // 큰 텍스트는 블랙
         ),
       ),
       themeMode: _themeMode,

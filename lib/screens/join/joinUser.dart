@@ -1,10 +1,9 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:studyex04/models/User.dart';
-import 'package:studyex04/models/user_session.dart';
-import '../../homepage.dart';
+
 import 'joinSuccess.dart';
 
 class Joinuser extends StatefulWidget {

@@ -6,7 +6,6 @@ import 'package:studyex04/homepage.dart';
 import 'package:studyex04/models/user_session.dart';
 import '../../models/User.dart';
 
-// ---------------- 랜덤 PIN 입력 페이지 (서버 통신) ----------------
 class RandomPin extends StatefulWidget {
   const RandomPin({super.key});
 
@@ -30,7 +29,7 @@ class _RandomPinState extends State<RandomPin> {
   }
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() { //빌드함수가 실행되기전 먼저 실행
     super.didChangeDependencies();
     _instructionTextColor= Theme.of(context).textTheme.bodyMedium?.color;
   }
@@ -55,6 +54,7 @@ class _RandomPinState extends State<RandomPin> {
     }
   }
 
+  
   void _deleteDigit() {
     if (_inputPassword.isNotEmpty) {
       _inputPassword = _inputPassword.substring(0, _inputPassword.length - 1);
@@ -64,7 +64,7 @@ class _RandomPinState extends State<RandomPin> {
     });
   }
 
-  // 서버와 통신하는 핵심 메서드 
+  // login_pinNo 호출 메서드
   Future<void> _checkPinNo() async {
     final url = 'http://localhost:8080/api/login_pinNo'; // 서버 API 주소
 
@@ -104,7 +104,7 @@ class _RandomPinState extends State<RandomPin> {
         );
       }
     } catch (e) {
-      // 네트워크 오류 등
+      // 네트워크 오류
       _resetPinInput();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("네트워크 오류가 발생했습니다: $e")),

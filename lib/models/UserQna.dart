@@ -19,6 +19,9 @@ class UserQna {
     required this.addTime,
   });
 
+
+
+
   // JSON에서 객체로 변환
   factory UserQna.fromJson(Map<String, dynamic> json) {
     return UserQna(

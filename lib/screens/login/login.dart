@@ -1,10 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
+import '../../homepage.dart';
 import '../../models/User.dart';
 import '../../models/user_session.dart';
 import '../mypage/mypage.dart';
-import '../../homepage.dart';
 import 'pin_main.dart';
 
 class LoginPage extends StatefulWidget {
@@ -45,7 +46,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
     _passwordController.dispose();
     super.dispose();
   }
-
+  //이메일 검증 로직
   bool _isValidEmail(String email) {
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     return emailRegex.hasMatch(email);
@@ -85,6 +86,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
     }
   }
 
+  //하단 스낵바 메서드
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -98,7 +100,6 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -133,6 +134,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                           : Colors.black,  // 라이트모드일 때 완전 흰색,
                     ),
                     decoration: InputDecoration(
+                      //인풋 박스 안 텍스트 설정
                       hintText: 'example@example.com',
                       hintStyle: TextStyle(
                         color: Colors.brown.withOpacity(0.4),
@@ -240,6 +242,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                         ),
                         icon: const Icon(Icons.keyboard_arrow_right, color: Colors.brown,),
                       ),
+
                       TextButton.icon(
                         onPressed: () {
                           Navigator.push(context, MaterialPageRoute(builder: (context) => RandomPin()));

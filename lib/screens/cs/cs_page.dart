@@ -112,7 +112,6 @@ class _InquiryTabState extends State<InquiryTab> {
   final TextEditingController _titleController = TextEditingController(); //제목
   final TextEditingController _contentController = TextEditingController(); //내용
   final TextEditingController _nameController = TextEditingController(); //이름
-  final TextEditingController _phoneController = TextEditingController(); //폰번호
   final TextEditingController _emailController = TextEditingController(); //이메일
 
   final _formKey = GlobalKey<FormState>();
@@ -197,7 +196,90 @@ class _InquiryTabState extends State<InquiryTab> {
       }
     }
   }
+  // 문의 내역 삭제하기
+  Future<void> _deleteInquiry(DateTime addtime , String phone) async {
+     final url = Uri.parse('http://localhost:8080/api/qna/delete?addtime=${addtime.toIso8601String()}&phone=$phone');
+     print('addtime 값 : ${addtime.toIso8601String()}');
+     try {
+       final response = await http.delete(url);
 
+       if(response.statusCode == 200) {
+         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+           content: Text('삭제가 완료되었습니다.'),
+           backgroundColor: Colors.green,
+           )
+         );
+         fetchInquiryList(phone);
+       } else {
+         print('1대1문의 삭제 실패시 : ${response.statusCode}');
+         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+           content: Text('삭제에 실패했습니다.'),
+           backgroundColor: Colors.red,
+         ));
+       }
+     } catch (e) {
+       print('오류 발생: \$e');
+       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('네트워크 오류')));
+     }
+
+  }
+  //정말로 삭제하시겠습니까 팝업창
+// 팝업창 함수
+  void _showDeleteConfirmationDialog(BuildContext context, DateTime addtime, String phone) async {
+    bool? confirmDelete = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          title: Text(
+              "삭제 확인",
+            style: TextStyle(
+              color: Theme.of(context).textTheme.bodyMedium?.color,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+          content: Text(
+              "정말로 삭제하시겠습니까?",
+            style: TextStyle(
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+              fontSize: 20,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false); // 취소
+              },
+              child: Text(
+                  "취소",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.bodyLarge?.color
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true); // 확인
+              },
+              child: Text(
+                  "삭제",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.bodyLarge?.color
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );//확인 선택시
+    if (confirmDelete == true) {
+      _deleteInquiry(addtime, phone); // 실제 삭제 실행
+    }
+  }
+  //1대1문의 폼 팝업창
   void _showInquiryForm() {
     showDialog(
       context: context,
@@ -499,6 +581,15 @@ class _InquiryTabState extends State<InquiryTab> {
                                   style: const TextStyle(fontSize: 14),
                                 ),
                               ),
+                              IconButton(
+                                onPressed: () { //삭제버튼 클릭시
+                                  _showDeleteConfirmationDialog(context,inquiry.addTime,UserSession.currentUser!.phoneNumber);
+                                },
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                              ),
                             ],
                           );
                         },
@@ -510,6 +601,7 @@ class _InquiryTabState extends State<InquiryTab> {
     );
   }
 }
+//정말로 삭제하시겠습니까 팝업창
 
 //고객칭찬 탭
 class PraiseTab extends StatelessWidget {
