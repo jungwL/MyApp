@@ -68,7 +68,6 @@ class _RandomPinState extends State<RandomPin> {
   // login_pinNo 호출 메서드
   Future<void> _checkPinNo() async {
     final url = dotenv.env['LOGIN_PINNO_API_URL']!; // 서버 API 주소
-
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -77,9 +76,7 @@ class _RandomPinState extends State<RandomPin> {
           'pinNo': int.parse(_inputPassword), // 정수형으로 변환하여 전송
         }),
       );
-
-      print('서버 응답 상태 코드: ${response.statusCode}');
-
+      print('Pin번호 서버 응답 상태 코드: ${response.statusCode}');
       if (response.statusCode == 200) {
         // 로그인 성공 시 사용자 정보를 UserSession에 저장
         final user = User.fromJson(json.decode(response.body)); //회원DB를 통해 받은 데이터 값 저장

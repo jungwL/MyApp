@@ -123,9 +123,7 @@ class _InquiryTabState extends State<InquiryTab> {
   //전화번호 기반 1:1문의 리스트 비동기 호출
   Future<void> fetchInquiryList(String phone) async {
     final baseurl = dotenv.env['SELECT_INQUIRYLIST_API_URL']!;
-    print('baseURL : $baseurl');
     final url = Uri.parse('$baseurl?phone=$phone');
-    print('URL 합본 : $url');
     try {
       final response = await http.get(url);
 
@@ -501,7 +499,7 @@ class _InquiryTabState extends State<InquiryTab> {
     return InputDecoration(
       labelText: label,
       labelStyle: TextStyle(
-        color: Theme.of(context).textTheme.bodyMedium?.color,
+        color: Theme.of(context).textTheme.bodyLarge?.color,
       ),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       focusedBorder: OutlineInputBorder(
@@ -575,25 +573,33 @@ class _InquiryTabState extends State<InquiryTab> {
                               '[${inquiry.addTime.year}-${inquiry.addTime.month.toString().padLeft(2, '0')}-${inquiry.addTime.day.toString().padLeft(2, '0')}] 제목 : ${inquiry.title}',
                             ),
                             children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  '문의 내용 : ${inquiry.content}',
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: () { //삭제버튼 클릭시
-                                  _showDeleteConfirmationDialog(context,inquiry.addTime,UserSession.currentUser!.phoneNumber);
-                                },
-                                icon: const Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 8,
+                                    ),
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      '문의 내용 : ${inquiry.content}',
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: IconButton(
+                                      onPressed: () { //삭제버튼 클릭시
+                                        _showDeleteConfirmationDialog(context,inquiry.addTime,UserSession.currentUser!.phoneNumber);
+                                      },
+                                      icon: Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           );

@@ -5,7 +5,7 @@ class User {
   final String userName;
   final int userPoint;
   final String phoneNumber;// 연락처 추가됨
-  final int pinNo;
+  final int pinNo; //핀번호 추가됨
 
   User({
     required this.userId,

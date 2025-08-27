@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../screens/cs/cs_page.dart';
 
 class Footer extends StatelessWidget {
   const Footer({super.key});
@@ -56,8 +57,11 @@ class Footer extends StatelessWidget {
                           fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 10),
-                    FooterLink(
-                        "고객센터"
+                    GestureDetector( //투명버튼
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>CsPage()));
+                        },
+                        child: const FooterLink("고객센터")
                     ),
                     const FooterText("010-1234-5678"),
                     const FooterText("평일 09:00 - 17:00"),

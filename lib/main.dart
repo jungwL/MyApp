@@ -4,12 +4,16 @@ import 'package:studyex04/screens/login/login.dart';
 import 'package:easy_localization/easy_localization.dart'; //다국어지원 라이브러리
 import 'homepage.dart'; // 메인 홈 화면
 import 'screens/join/termspage.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   await dotenv.load(fileName: ".env"); //앱 초기 실행시 .env 파일 로드
-
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL']!, 
+    anonKey: dotenv.env['SUPABASE_ANONKEY']!, //supabase anonyKey값
+  );
 
   runApp(
     EasyLocalization(
@@ -73,7 +77,7 @@ class _MyAppState extends State<MyApp> {
         scaffoldBackgroundColor: Colors.black,
         cardColor: Colors.grey[800],
         textTheme: ThemeData.light().textTheme.copyWith(
-          bodyMedium: const TextStyle(color: Colors.brown), // 일반 텍스트
+          bodyMedium: const TextStyle(color: Colors.white), // 일반 텍스트
           bodyLarge: const TextStyle(color: Colors.white),  // 큰 텍스트는 블랙
         ),
       ),

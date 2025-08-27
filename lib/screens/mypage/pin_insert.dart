@@ -21,12 +21,12 @@ class RegisterPinPage extends StatefulWidget {
 }
 
 class _RegisterPinPageState extends State<RegisterPinPage> {
-  String _inputPassword = "";
-  List<String> _digits = [];
+  String _inputPassword = ""; //입력받을 비밀번호
+  List<String> _digits = []; //키트데
   PinStage _pinStage = PinStage.firstEntry;
-  String _firstPin = "";
-  String _instructionText = '등록하실 번호 4자리를 입력해주세요';
-  Color? _instructionTextColor;
+  String _firstPin = "";  //첫번째 핀번호
+  String _instructionText = '등록하실 번호 4자리를 입력해주세요'; //디폴트 메세지
+  Color? _instructionTextColor; //디폴트 메세지 색상
 
   @override
   void initState() {
@@ -40,18 +40,26 @@ class _RegisterPinPageState extends State<RegisterPinPage> {
     super.didChangeDependencies();
     _instructionTextColor = Theme.of(context).textTheme.bodyMedium?.color;
   }
+  //키패드 번호 순서 랜덤 생성
   void _shuffleDigits() {
     _digits = List.generate(10, (index) => index.toString());
     _digits.shuffle(Random());
     print("---------------- _digits: $_digits");
   }
-
+//  동일 숫자 4자리 유효성 검사 메서드
+  bool _validateIdenticalNumbers(String pin) {
+    if (pin.length != 4) {
+      return false; // 4자리가 아니면 검사하지 않음
+    }
+    // 첫 번째 문자와 나머지 문자들이 모두 같은지 확인
+    final firstChar = pin[0];
+    return pin.split('').every((char) => char == firstChar);
+  }
   void _addDigit(String digit) {
     if (_inputPassword.length < 4) {
       _inputPassword += digit;
     }
     setState(() {});
-
     if (_inputPassword.length == 4) {
       if (_pinStage == PinStage.firstEntry) {
         _handleFirstEntry();
@@ -70,6 +78,17 @@ class _RegisterPinPageState extends State<RegisterPinPage> {
 
   // 1단계 입력 처리
   void _handleFirstEntry() {
+    //동일한 숫자 4자리 검증
+    if (_validateIdenticalNumbers(_inputPassword)) {
+      _showSnackBar('동일한 숫자 4자리는 Pin 번호로 사용할 수 없습니다.', Colors.red);
+      // 입력값을 초기화하고 UI를 업데이트
+      setState(() {
+        _inputPassword = ""; //번호 초기화
+        _instructionText = '동일한 숫자 4자리는 Pin 번호로 사용할 수 없습니다.';
+        _instructionTextColor = Colors.red;
+      });
+      return; // 검사에 실패했으므로 다음 단계로 진행하지 않음
+    }
     _firstPin = _inputPassword;
     _inputPassword = ""; // 입력 초기화
     _shuffleDigits(); // 키패드 다시 섞기
@@ -163,8 +182,8 @@ class _RegisterPinPageState extends State<RegisterPinPage> {
       width: 20,
       height: 20,
       decoration: BoxDecoration(
-        color: index < _inputPassword.length ? Colors.black : Colors.transparent,
-        border: Border.all(color: Colors.black),
+        color: index < _inputPassword.length ? Theme.of(context).textTheme.bodyLarge?.color : Colors.transparent,
+        border: Border.all(color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.transparent),
         borderRadius: BorderRadius.circular(10),
       ),
     );

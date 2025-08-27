@@ -46,6 +46,8 @@ dependencies:
   auto_size_text: ^3.0.0
   barcode_widget: ^2.0.1
   flutter_secure_storage: ^9.2.4
+  url_launcher: ^6.3.2
+  supabase_flutter: ^2.9.1
 
 
 

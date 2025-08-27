@@ -17,9 +17,8 @@ import 'widgets/customBottomNai.dart';
 import 'widgets/customDrawer.dart';
 import 'core/ImageSlideList.dart';
 import 'screens/storeInfo/companyInfoPage.dart';
-import 'screens/onlineOrder_page.dart';
 import 'core/todayBreadListImg.dart';
-import 'screens/todayBreadList.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -151,7 +150,6 @@ class _HomePageState extends State<HomePage> {
       final response = await http.get(Uri.parse(url)); //위 URL로 GET요청을 보냄
       //디버깅용 로그 출력 > 배포전에는 무시됨
       if (kDebugMode) {
-        debugPrint(url);
         debugPrint('응답 코드: ${response.statusCode}'); // 응답 코드 출력
       }
 
@@ -269,6 +267,7 @@ class _HomePageState extends State<HomePage> {
             _notificationCard(),
             _statsCard(),
             _weatherCard(),
+            _outSideLinkCard(),
             //footer추가
             const SizedBox(height: 24),
 
@@ -626,6 +625,21 @@ class _HomePageState extends State<HomePage> {
         onPressed: _fetchWeather,
       ),
     ),
+  );
+  //신규 위젯카드
+  Widget _outSideLinkCard() => Card(
+    color: Theme.of(context).cardColor,
+    margin: const EdgeInsets.symmetric(vertical: 8),
+    child: Column(
+      children: [
+        TextButton(
+            onPressed: () {
+              launchUrl(Uri.parse('https://www.paris.co.kr/'));
+            }, 
+            child: Text('타 사이트 바로가기')
+        ),
+      ],
+    )
   );
 
   // UI 위젯
