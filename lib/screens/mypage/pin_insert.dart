@@ -53,7 +53,7 @@ class _RegisterPinPageState extends State<RegisterPinPage> {
     }
     // 첫 번째 문자와 나머지 문자들이 모두 같은지 확인
     final firstChar = pin[0];
-    return pin.split('').every((char) => char == firstChar);
+    return pin.split('').every((char) => char == firstChar); //pin.split(''): "8888"이라는 문자열을 ["8", "8", "8", "8"]
   }
   void _addDigit(String digit) {
     if (_inputPassword.length < 4) {

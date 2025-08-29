@@ -183,10 +183,13 @@ class _RandomPinState extends State<RandomPin> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: 20,),
-          Text(
-              _instructionText,
-            style: TextStyle(
-              color: _instructionTextColor
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Text(
+                _instructionText,
+              style: TextStyle(
+                color: _instructionTextColor
+              ),
             ),
           ),
           const SizedBox(height: 20,),

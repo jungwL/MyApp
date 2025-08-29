@@ -1,4 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:studyex04/models/User.dart';
+import 'package:studyex04/models/user_session.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 
 class AddressChangePage extends StatefulWidget {
   const AddressChangePage({super.key});
@@ -11,55 +17,63 @@ class _AddressChangePageState extends State<AddressChangePage> {
   final TextEditingController _addressController = TextEditingController();
   bool _isLoading = false;
 
-  // 👉 카카오 API 제거하고 직접 주소 입력하게 변경
-  void _inputAddressManually() async {
-    final result = await showDialog<String>(
-      context: context,
-      builder: (_) {
-        String temp = '';
-        return AlertDialog(
-          title: const Text('주소 입력'),
-          content: TextField(
-            autofocus: true,
-            decoration: const InputDecoration(hintText: '주소를 입력하세요'),
-            onChanged: (val) => temp = val,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('취소'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(temp),
-              child: const Text('확인'),
-            ),
-          ],
-        );
-      },
-    );
+  String address = UserSession.currentUser!.userAddress;
 
-    if (result != null && result.trim().isNotEmpty) {
-      setState(() {
-        _addressController.text = result.trim();
-      });
+  @override
+  void initState() {
+    super.initState();
+    _fetchAddresses();
+  }
+  //주소목록
+  Future<void> _fetchAddresses() async {
+    final String url = 'http://localhost:8080/api/getAddress?phoneNumber=${UserSession.currentUser!.phoneNumber}';
+    print('주소지 가져오기 호출 $url');
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final user = User.fromJson(json.decode(response.body));
+        setState(() {
+          address = user.userAddress;
+        });
+        print('가져온 주소 : $address');
+      } else {
+        throw Exception('Failed to fetch addresses');
+      }
+    } catch (e) {
+      print('오류 발생: \ $e');
     }
   }
 
-  // 👉 실제 서버 연동 없이 UI 테스트용 처리
+  //API 비동기 호출
   Future<void> _changeAddress() async {
-    final address = _addressController.text.trim();
-    if (address.isEmpty) {
-      _showSnackBar('주소를 입력해주세요');
-      return;
+    final String url = dotenv.env['CHANGE_ADDRESS_API_URL']!;
+    print('주소 변경 API 호출 : $url');
+    print('변경 주소값 : ${_addressController.text}');
+    print('전화번호 : ${UserSession.currentUser!.phoneNumber}');
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          'phoneNumber': UserSession.currentUser!.phoneNumber,
+          'userAddress': _addressController.text,
+        },)
+      );
+      if (response.statusCode == 200) {
+        _showSnackBar('주소가 변경되었습니다.');
+        final newAddress = _addressController.text;
+
+        setState(() {
+          Navigator.pop(context, newAddress);
+        });
+
+
+      }else{
+        _showSnackBar('주소 변경에 실패하였습니다.');
+      }
+    } catch (e) {
+      print('오류 발생: \ $e');
     }
-
-    setState(() => _isLoading = true);
-
-    await Future.delayed(const Duration(seconds: 1)); // 로딩 시뮬레이션
-
-    setState(() => _isLoading = false);
-
-    _showDialog('주소 변경 완료', '주소지가 성공적으로 변경되었습니다.');
   }
 
   void _showSnackBar(String message) {
@@ -102,6 +116,14 @@ class _AddressChangePageState extends State<AddressChangePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
+              '현재 주소',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text('${address}',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15),),
+            SizedBox(height: 20,),
+            Text(
               '주소지를 변경하세요',
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
@@ -115,13 +137,10 @@ class _AddressChangePageState extends State<AddressChangePage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: TextField(
+              child: TextFormField(
                 controller: _addressController,
-                readOnly: true,
-                onTap: _inputAddressManually,
                 decoration: InputDecoration(
                   labelText: '주소 입력',
-                  hintText: '주소를 직접 입력하려면 클릭하세요',
                   prefixIcon: const Icon(Icons.location_on_outlined),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -131,11 +150,17 @@ class _AddressChangePageState extends State<AddressChangePage> {
                     vertical: 16,
                   ),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '주소를 입력해주세요.';
+                  }else {
+                    return null;
+                  }
+                }
               ),
             ),
 
             const SizedBox(height: 32),
-
             // 변경 버튼
             SizedBox(
               width: double.infinity,
@@ -154,7 +179,9 @@ class _AddressChangePageState extends State<AddressChangePage> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                onPressed: _changeAddress,
+                onPressed: (){
+                  _changeAddress(); //비동기함수 호출
+                },
               ),
             ),
           ],

@@ -92,7 +92,7 @@ class _CustomAppBarState extends State<CustomAppBar>
           key: const ValueKey('logoTitle'),
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset('images/Logo1.png', width: 120, height: 120),
+            Image.asset('images/Logo1.png', width: 120, height: 200),
             const SizedBox(width: 2),
             Expanded(
               child: AnimatedTextKit(

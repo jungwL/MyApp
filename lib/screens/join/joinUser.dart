@@ -23,6 +23,7 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _authCodeController = TextEditingController();
+  final TextEditingController _userAddressController = TextEditingController();
 
   //커서 포커스
   final FocusNode _authCodeFocus = FocusNode();
@@ -64,14 +65,14 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
           'userId': _emailController.text,         // 사용자 이메일(ID)
           'password': _passwordController.text,    // 사용자 비밀번호
           'phoneNumber': _phoneController.text,    // 사용자 전화번호
+          'userAddress' : _userAddressController.text, // 사용자 주소
         }),
       );
       print('회원가입 HTTP 요청 코드 :  ${response.statusCode}');
       // 서버가 200 OK 응답을 보낸 경우 → 회원가입 성공
       if (response.statusCode == 200) {
-        // 응답받은 JSON 데이터를 User 객체로 변환
-        final user = User.fromJson(json.decode(response.body));
-
+        final msg = response.body; // 그냥 문자열로 받음
+        print('서버통해 받은 메시지 : $msg');
         // 상단에 파란색 알림 표시 (회원가입 성공 메시지)
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -106,7 +107,7 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
 
       // 예외가 발생한 경우 (예: 서버 연결 실패, JSON 오류 등)
     } catch (e, stack) {
-      print('서버 예외 발생: $e');           // 예외 메시지 출력
+      print('서버 예외 발생: ${e.toString()}');           // 예외 메시지 출력
       print('스택 트레이스: $stack');        // 어디서 예외가 났는지 추적
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('서버 오류: ${e.toString()}')),  // 사용자에게 오류 메시지 표시
@@ -334,8 +335,32 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
                     },
                   ),
 
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: _userAddressController,
+                    keyboardType: TextInputType.streetAddress,
+                    decoration: InputDecoration(
+                        labelText: '주소',
+                        labelStyle: const TextStyle(color: Colors.brown),
+                        prefixIcon: const Icon(Icons.home),
+                        filled: true,
+                        fillColor: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white10 // 다크모드일 때 연한 흰색
+                            : Colors.white,
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.brown, width: 2),
+                        )
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return '주소를 입력해주세요';
+                      }
+                      return null;
+                    }
+                  ),
                   const SizedBox(height: 32),
-
                   // 인증번호 입력 + 본인인증 버튼 Row
                   Row(
                     children: [
@@ -350,7 +375,7 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
                               keyboardType: TextInputType.number,
                               enabled: _isEnabled,
                               decoration: InputDecoration(
-                                labelText: '인증번호 입력',
+                                labelText: '인증번호 4자리',
                                 labelStyle: const TextStyle(color: Colors.brown),
                                 prefixIcon: const Icon(Icons.vpn_key_outlined),
                                 filled: true,
@@ -452,7 +477,6 @@ class _JoinUserState extends State<Joinuser> with SingleTickerProviderStateMixin
                         ),
                     ],
                   ),
-
                   if (_isVerified)
                     const Padding(
                       padding: EdgeInsets.only(top: 8),

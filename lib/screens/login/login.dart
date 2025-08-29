@@ -69,6 +69,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
       //응답코드가 200일경우
       if (response.statusCode == 200) {
         final user = User.fromJson(json.decode(response.body)); //회원DB를 통해 받은 데이터 값 저장
+        print(user);
         UserSession.login(user); // 로그인 상태 유지 처리
         print(user.userName);
         final targetPage = widget.redirectTo == 'mypage'
@@ -84,6 +85,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
       }
     } catch (e) {
       _showErrorSnackBar('서버 오류: ${e.toString()}');
+      print(e.toString());
     }
   }
 
@@ -227,14 +229,14 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                   ),
                   SizedBox(height: 40,),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       TextButton.icon(
                         onPressed: () {
                           Navigator.pushNamed(context, '/termspage');
                         },
                         label: Text(
-                          '회원가입하러 가기',
+                          '회원가입',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).textTheme.bodyMedium?.color,
@@ -249,7 +251,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                           Navigator.push(context, MaterialPageRoute(builder: (context) => RandomPin()));
                         },
                         label: Text(
-                          '간편 로그인하러 가기',
+                          '간편 로그인',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).textTheme.bodyMedium?.color,
