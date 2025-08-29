@@ -1,122 +1,119 @@
 package org.example.startapi;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class UserService {
-    private List<UserDTO> usersList = new ArrayList<>(); //회원정보 리스트
-    private List<UserQnaDTO> qnaList = new ArrayList<>(); //1대1문의 리스트
 
-    public UserService() {
-        //-------------------------------------------회원 리스트--------------------------------------------------------------------
-        usersList.add(new UserDTO("test1@test.com", "1234", "홍길동", 100, "01011111111",1111));
-        usersList.add(new UserDTO("test2@test.com", "abcd", "김철수", 200, "01022222222",2222));
-        usersList.add(new UserDTO("son@test.com", "123456789@", "손흥민", 1200, "01033333333",3333));
-        //------------------------------------------1대1문의 리스트-------------------------------------------------------------------
-        qnaList.add(new UserQnaDTO("칭찬","정보서비스","테스트","문의내용","홍길동","01011111111","test1@test.com","2025-06-06"));
-        qnaList.add(new UserQnaDTO("칭찬","이벤트","이벤트 당첨됬습니다.","이벤트 당첨됬는데 수령지를 알고싶습니다.","홍길동","01011111111","test1@test.com","2025-06-08"));
-        qnaList.add(new UserQnaDTO("칭찬","이벤트","이벤트 당첨됬습니다.","이벤트 수령지.","손흥민","01033333333","son@test.com","2025-05-13"));
+    private final UserRepository userRepository;
+    private final UserQnaRepository userQnaRepository;
+
+    @Autowired
+    public UserService(UserRepository userRepository, UserQnaRepository userQnaRepository) {
+        this.userRepository = userRepository;
+        this.userQnaRepository = userQnaRepository;
     }
-    //-------------------------------------------------------------------------------------
-    // 로그인 검증 메서드
-    public UserDTO login(String userId, String password) {
-        for (UserDTO user : usersList) {
-            if (user.getUserId().equals(userId) && user.getPassword().equals(password)) {
-                return user;
-            }
-        }
-        return null;
+
+    // --- 로그인 및 사용자 조회 ---
+    public User login(String userId, String password) {
+        return userRepository.findByUserIdAndPassword(userId, password).orElse(null);
     }
-    //핀번호 로그인 메서드
-    public UserDTO pinNoLogin(int userPinNo) {
-        if(userPinNo == 0) { //처음 로그인 시 초기값이 0으로 세팅됨
-            return null;
-        }
-        for (UserDTO user : usersList) {
-            if (user.getPinNo() == userPinNo) {
-                return user;
-            }
-        }
-        return null;
+
+    public User pinNoLogin(int userPinNo) {
+        if (userPinNo == 0) return null;
+        return userRepository.findByPinNo(userPinNo).orElse(null);
     }
-    //---------------------------------------------------------------------------
-    // 회원가입: 아이디 또는 전화번호 중복 검사 메서드
-    public boolean registerUser(UserDTO newUser) {
-        for (UserDTO user : usersList) {
-            if (user.getUserId().equals(newUser.getUserId())
-                    || user.getPhoneNumber().equals(newUser.getPhoneNumber())) {
-                return false; // 중복된 아이디 또는 전화번호
-            }
+
+    // --- 회원가입 ---
+    @Transactional
+    public boolean registerUser(UserDTO newUserDto) {
+        if (userRepository.existsByUserId(newUserDto.getUserId()) || userRepository.existsByPhoneNumber(newUserDto.getPhoneNumber())) {
+            return false; // 중복
         }
-        usersList.add(newUser);
+        User user = new User();
+        user.setUserId(newUserDto.getUserId());
+        user.setPassword(newUserDto.getPassword());
+        user.setUserName(newUserDto.getUserName());
+        user.setUserPoint(newUserDto.getUserPoint());
+        user.setPhoneNumber(newUserDto.getPhoneNumber());
+        user.setUserAddress(newUserDto.getUserAddress());
+        userRepository.save(user);
         return true;
     }
-    //------------------------------------------------------------------------------
-    // 1대1 문의 등록 메서드
-    public UserQnaDTO qna(String consultType, String contentType, String title,
-                          String content, String name, String phone, String email, String addTime) {
-        UserQnaDTO newQna = new UserQnaDTO(consultType, contentType, title, content, name, phone, email, addTime);
-        qnaList.add(newQna); //매개변수 값들을 리스트에 담는다.
-        return newQna;
-    }
-    // 전화번호 기준 1:1 문의 목록 반환(1:1문의 탭 선택시  실행)
-    public List<UserQnaDTO> getQnaListByPhone(String phone) {
-        return qnaList.stream() // 스크림 생성
-                .filter(qna -> qna.getPhone() != null && qna.getPhone().equals(phone)) //qna가 phone이 null값이 아니고 qnaList에 저장된 phoneNumber값이랑 매개변수 phone 값이랑 같은 경우
-                .collect(Collectors.toList()); // true 값만 리스트에 담는다.
-    }
-    // 날짜값 데이터로 회원의
-    public boolean deleteQna(LocalDateTime addtime , String phone) {
-        System.out.println(addtime + phone);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        for (UserQnaDTO userQnaDTO : qnaList ) {
-            if(userQnaDTO.getPhone().equals(phone)) {
-                System.out.println("1번째 조건문 통과 "+qnaList.indexOf(userQnaDTO));
-                String addtimeStr = addtime.format(formatter);
-                if(userQnaDTO.getAddTime().equals(addtimeStr)) {
-                    System.out.println("2번째 조건문 통과" + qnaList.indexOf(userQnaDTO));
-                    qnaList.remove(userQnaDTO);
+    // --- 1:1 문의 ---
+    @Transactional
+    public UserQna qna(UserQnaDTO qnaDto) {
+        UserQna newQna = new UserQna();
+        newQna.setConsultType(qnaDto.getConsultType());
+        newQna.setContentType(qnaDto.getContentType());
+        newQna.setTitle(qnaDto.getTitle());
+        newQna.setContent(qnaDto.getContent());
+        newQna.setName(qnaDto.getName());
+        newQna.setPhone(qnaDto.getPhone());
+        newQna.setEmail(qnaDto.getEmail());
+        newQna.setAddTime(LocalDate.parse(qnaDto.getAddTime())); // String -> LocalDate
+        return userQnaRepository.save(newQna);
+    }
+
+    public List<UserQna> getQnaListByPhone(String phone) {
+        return userQnaRepository.findByPhone(phone);
+    }
+
+    @Transactional
+    public boolean deleteQna(LocalDateTime addTime, String phone) {
+        LocalDate addDate = addTime.toLocalDate();
+        Optional<UserQna> qnaOptional = userQnaRepository.findByPhoneAndAddTime(phone, addDate);
+        if (qnaOptional.isPresent()) {
+            userQnaRepository.delete(qnaOptional.get());
+            return true;
+        }
+        return false;
+    }
+
+    // --- 사용자 정보 변경 ---
+    @Transactional
+    public boolean changePassword(String newPassword, String phoneNumber) {
+        return userRepository.findByPhoneNumber(phoneNumber)
+                .map(user -> {
+                    if (user.getPassword().equals(newPassword)) return false;
+                    user.setPassword(newPassword);
+                    userRepository.save(user);
                     return true;
-                }
-            }
-        }
-        return false;
+                })
+                .orElse(false);
     }
-    //------------------------------------------------------------------------------
-    // 비밀번호 변경 메서드
-    public boolean changePassword(String cPassword, String phoneNumber) {
-        for (UserDTO user : usersList) {
-            // 전화번호 일치하는 사용자 찾기
-            if (user.getPhoneNumber().equals(phoneNumber)) {
-                // 새 비밀번호가 기존 비밀번호와 동일한 경우
-                if (user.getPassword().equals(cPassword)) {
-                    return false; // 변경 불가
-                }
-                // 비밀번호 변경 처리
-                user.setPassword(cPassword);
-                return true;
-            }
-        }
-        // 해당 전화번호의 사용자가 없는 경우
-        return false;
+
+    @Transactional
+    public boolean registerPinNo(int pinNo, String phoneNumber) {
+        return userRepository.findByPhoneNumber(phoneNumber)
+                .map(user -> {
+                    user.setPinNo(pinNo);
+                    userRepository.save(user);
+                    return true;
+                })
+                .orElse(false);
     }
-    //------------------------------------------------------------------------------
-    // Pin 번호 등록 메서드
-    public boolean registerPinNo(int pinNo , String phoneNumber) {
-        for (UserDTO user : usersList) {
-            if(user.getPhoneNumber().equals(phoneNumber)) {
-                user.setPinNo(pinNo);
-                return true;
-            }
-        }
-        return false;
+
+    @Transactional
+    public User changeAddress(String phoneNumber, String address) {
+        return userRepository.findByPhoneNumber(phoneNumber)
+                .map(user -> {
+                    user.setUserAddress(address);
+                    return userRepository.save(user);
+                })
+                .orElse(null);
+    }
+
+    // --- 주소지 조회 ---
+    public User getUserAddress(String phoneNumber) {
+        return userRepository.findByPhoneNumber(phoneNumber).orElse(null);
     }
 }
